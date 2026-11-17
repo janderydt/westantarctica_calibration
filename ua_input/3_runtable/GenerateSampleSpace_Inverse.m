@@ -44,7 +44,7 @@ function GenerateSampleSpace_Inverse
 %   - UQLab Rel. 2.0.0 (https://www.uqlab.com; free registration), which
 %     must be on the MATLAB path
 %   - GenerateRunTable_Inverse (same folder) and ReadWritetable (ua_input/run),
-%     and EmptyTable.csv (provided in this folder; the scripts expect it in ../GLUE_Inverse)
+%     and EmptyTable.csv (provided in this folder)
 %
 %   See also GENERATERUNTABLE_INVERSE, UQ_CREATEINPUT,
 %   UQ_GETSAMPLE, UQ_ENRICHLHS.

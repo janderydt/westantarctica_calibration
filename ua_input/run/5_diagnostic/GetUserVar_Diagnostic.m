@@ -3,7 +3,7 @@ function UserVar = GetUserVar_Diagnostic(RunTable,ind,UserVar)
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % This function reads the results of the inverse experiments (restart files
-% ../GLUE_Inverse/cases/<Domain>/<Domain>_Inverse_<ExpID>/<...>-RestartFile_InverseCycle<k>.mat),
+% ../4_inverse/cases/<Domain>/<Domain>_Inverse_<ExpID>/<...>-RestartFile_InverseCycle<k>.mat),
 % which can be obtained upon request from the author.
 %
 % PURPOSE
@@ -59,7 +59,7 @@ for geom=["IS","GI"]
         if ismember(UserVar.Domain,"AMUND_nsmbl")
             switch UserVar.(geom+"Geometry")
                 case {'2000','2009','2014','2018','2020'}
-                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+...
+                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+...
                         UserVar.(geom+"Geometry")+"_EXTRUDED.mat";
                     UserVar.("Adapt"+geom+"BaseGeometry") = 0;
                 otherwise
@@ -69,7 +69,7 @@ for geom=["IS","GI"]
         elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
             switch UserVar.(geom+"Geometry")
                 case cellstr(vertcat(["Weertmanyr"+string([30:5:50 75]), "Umbiyr"+string([30:5:50 75])]))
-                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+...
+                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+...
                         UserVar.(geom+"Geometry")+".mat";
                     UserVar.("Adapt"+geom+"BaseGeometry") = 0;
                 otherwise
@@ -79,7 +79,7 @@ for geom=["IS","GI"]
         end
  
     elseif UserVar.InverseCycleIS > 1 
-        UserVar.(geom+"BaseGeometry") = UserVar.casefolder+"../../../GLUE_Inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(RunTable{ind,"InverseA"})+"/"+UserVar.Domain+...
+        UserVar.(geom+"BaseGeometry") = UserVar.casefolder+"../../../4_inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(RunTable{ind,"InverseA"})+"/"+UserVar.Domain+...
             "_Inverse_"+string(RunTable{ind,"InverseA"})+"-RestartFile_InverseCycle"+string(UserVar.("InverseCycle"+geom))+".mat";
 
         if ismember(UserVar.Domain,"AMUND_nsmbl")
@@ -89,8 +89,8 @@ for geom=["IS","GI"]
                 case {'2009','2014','2018','2020'}
                     UserVar.("Adapt"+geom+"BaseGeometry") = 1;
                     UserVar.("InterpolantsToCalculateNew"+geom+"Geometry") = ...
-                        [UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat",... % this is the base geometry
-                        UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+UserVar.(geom+"Geometry")+"_EXTRUDED.mat"]; % this is the perturbed geometry
+                        [UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat",... % this is the base geometry
+                        UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+UserVar.(geom+"Geometry")+"_EXTRUDED.mat"]; % this is the perturbed geometry
                 otherwise
                     error("ExpID "+RunTable{ind,"ExpID"}+": Do not recognise "+geom+"thick flag in RunTable.");
             end
@@ -103,8 +103,8 @@ for geom=["IS","GI"]
                     UserVar.("Adapt"+geom+"BaseGeometry") = 1;
                     basegeom = replace(UserVar.(geom+"Geometry"),string([35:5:50 75]),"30");
                     UserVar.("InterpolantsToCalculateNew"+geom+"Geometry") = ...
-                        [UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+basegeom+".mat",... % this is the base geometry
-                        UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+UserVar.(geom+"Geometry")+".mat"]; % this is the perturbed geometry
+                        [UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+basegeom+".mat",... % this is the base geometry
+                        UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+UserVar.(geom+"Geometry")+".mat"]; % this is the perturbed geometry
                 otherwise
                     error("ExpID "+RunTable{ind,"ExpID"}+": Do not recognise "+geom+"thick flag in RunTable.");
             end
@@ -119,10 +119,10 @@ end
     
 %% density interpolant: same as inverse run
 if ismember(UserVar.Domain,"AMUND_nsmbl")
-    UserVar.DensityInterpolant = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat";   
+    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat";   
 
 elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
-    UserVar.DensityInterpolant = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_Weertmanyr30.mat";
+    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_Weertmanyr30.mat";
 
 end
 
@@ -130,7 +130,7 @@ end
 UserVar.InverseC = RunTable{ind,"InverseC"};
 
 % copy relevant files   
-NameOfFiletoRead="../GLUE_Inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseC)+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseC)+...
+NameOfFiletoRead="../4_inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseC)+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseC)+...
     "-RestartFile_InverseCycle"+string(RunTable{ind,"InverseCycleC"})+".mat";
 if exist(NameOfFiletoRead,"file")
     load(NameOfFiletoRead,"F","MUA","CtrlVarInRestartFile");
@@ -146,7 +146,7 @@ end
 UserVar.InverseA = RunTable{ind,"InverseA"};
 
 % copy relevant files   
-NameOfFiletoRead="../GLUE_Inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseA)+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseA)+...
+NameOfFiletoRead="../4_inverse/cases/"+UserVar.Domain+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseA)+"/"+UserVar.Domain+"_Inverse_"+string(UserVar.InverseA)+...
     "-RestartFile_InverseCycle"+string(RunTable{ind,"InverseCycleA"})+".mat";
 if exist(NameOfFiletoRead,"file")
     load(NameOfFiletoRead,"F","MUA","CtrlVarInRestartFile");
@@ -160,11 +160,11 @@ end
 %% velocity interpolants for fixed boundaries // we assume these do not change in the perturbation experiments
 if ismember(UserVar.Domain,"AMUND_nsmbl")
     UserVar.Velocity = "2000";
-    UserVar.VelocityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
+    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
 
 elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
     UserVar.Velocity = "Weertmanyr30";
-    UserVar.VelocityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_Weertmanyr30.mat";
+    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_Weertmanyr30.mat";
 
 end
 

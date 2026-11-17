@@ -4,7 +4,7 @@ function GenerateRunTable_Diagnostic
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % Needs the run tables of the inverse experiments (finished experiments and their
 % ExpIDs), which depend on earlier model runs (these data can be obtained upon request from the author). NOTE: this version builds rows with 22
-% values, but EmptyTable.csv (= RunTable_GLUE_Diagnostic_9999.csv) has 24 columns (it also has
+% values, but EmptyTable.csv has 24 columns (it also has
 % InverseAFill and InverseCFill): the script and the table are out of sync.
 %
 % PURPOSE
@@ -32,9 +32,9 @@ UserVar.home = pwd;
 %% original inversion run table(s)
 % run tables of the inverse experiments that are used as starting points
 % TODO: confirm the file name(s) and the model domain
-RunTable_inverse_files = "../GLUE_Inverse/RunTable_AMUND_nsmbl_Adjoint_HPDSample_Enriched0_19-11-2025.csv";
+RunTable_inverse_files = "../4_inverse/RunTable_AMUND_nsmbl_Adjoint_HPDSample_Enriched0_19-11-2025.csv";
 Modeldomain = "AMUND_nsmbl"; % "AMUND_nsmbl" or "SYNTH_PIG_nsmbl"
-% for SYNTH_PIG_nsmbl: RunTable_inverse_files = "../GLUE_Inverse/RunTable_SYNTH_PIG_nsmbl_Weertmanyr30_Adjoint_"+["Weertman" "Umbi"]+"_Enriched0_24-10-2025.csv";
+% for SYNTH_PIG_nsmbl: RunTable_inverse_files = "../4_inverse/RunTable_SYNTH_PIG_nsmbl_Weertmanyr30_Adjoint_"+["Weertman" "Umbi"]+"_Enriched0_24-10-2025.csv";
 
 %% year for original and new geometry
 ExpID_oldgeom = "2000"; % AMUND_nsmbl: "2000"; SYNTH_PIG_nsmbl: "Weertmanyr30"

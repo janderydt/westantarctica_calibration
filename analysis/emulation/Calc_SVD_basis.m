@@ -20,7 +20,7 @@ function Calc_SVD_basis(data,SVD_settings,SVD_filetowrite)
 %     ./DiagnosticData/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat with
 %       MUA_yr2, GF_yr2 (mesh and grounding mask), gaA, gaC, gsA, gsC, m, n, dhdt_err, slidinglaw (one value per
 %       ensemble member) and Delta_u.<perturbation>.map (members x nodes x cycle)
-%     ../GLUE_Data/GLUE_Interpolants/<velocity interpolants> (extruded velocities of both years:
+%     ../ua_input/1_interpolants/<velocity interpolants> (extruded velocities of both years:
 %       GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for 2000,
 %       GriddedInterpolants_<yr>-<yr+1>_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for AMUND, or
 %       ScatteredInterpolants_Velocities_SYNTH_PIG_<year>.mat)
@@ -161,7 +161,7 @@ for yy=[startyear targetyear]
             error("Do not recognise domain")
         end
     end
-    load("../GLUE_Data/GLUE_Interpolants/"+fname);
+    load("../ua_input/1_interpolants/"+fname);
     v_tmp = hypot(Fus.Values,Fvs.Values);
     Fu = Fus; Fu.Values = v_tmp;
     std_tmp = hypot(Fxerr.Values,Fyerr.Values);

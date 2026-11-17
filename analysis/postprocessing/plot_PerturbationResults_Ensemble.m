@@ -27,7 +27,7 @@ function plot_PerturbationResults_Ensemble(domain,diagnostic_to_plot,parameter_t
 %   ./InversionData/<domain>/<domain>_<startyear>_inversiondata_<slidinglaw>.mat (Calc_InverseResults_Ensemble),
 %   ./DiagnosticData/<domain>/<domain>_perturbation_grids.mat (meshes MUA_<year> and grounding masks GF_<year> of the
 %   years), basins_IMBIE_v2.mat in the current folder, and for "Delta_u" the extruded velocity and geometry interpolants in
-%   ../GLUE_Data/GLUE_Interpolants
+%   ../ua_input/1_interpolants
 %
 % REQUIRES
 %   Ua source code (Ua2D_DefaultParameters, DeactivateMUAelements, FEintegrate2D, PlotMeshScalarVariable,
@@ -85,7 +85,7 @@ CtrlVar=Ua2D_DefaultParameters;
 if diagnostic_to_plot=="Delta_u"
 
     UserVar.casefolder=pwd;
-    UserVar.datafolder=pwd+"/../GLUE_Data/";
+    UserVar.datafolder=pwd+"/../ua_input/";
     UserVar.Experiment="";
 
     %% corresponding GF masks
@@ -593,14 +593,14 @@ switch diagnostic_to_plot
 
         % observed change in velocity
         if startyear=="yr2000"
-            load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED","Fus","Fvs","Fxerr","Fyerr");
+            load("../ua_input/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED","Fus","Fvs","Fxerr","Fyerr");
         else
             if contains(domain,"AMUND")
-                load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_"+erase(startyear,"yr")+"-"+...
+                load("../ua_input/1_interpolants/GriddedInterpolants_"+erase(startyear,"yr")+"-"+...
                     string(double(erase(startyear,"yr"))+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
                     "Fus","Fvs","Fxerr","Fyerr");
             elseif contains(domain,"SYNTH_PIG")
-                load("../GLUE_Data/GLUE_Interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+startyear+".mat","Fus","Fvs","Fxerr","Fyerr");
+                load("../ua_input/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+startyear+".mat","Fus","Fvs","Fxerr","Fyerr");
             end
         end
         uxstart = Fus(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
@@ -611,14 +611,14 @@ switch diagnostic_to_plot
         uerrstart = sqrt((uxstart.^2.*uxerrstart.^2+uystart.^2.*uyerrstart.^2)./(uxstart.^2+uystart.^2+eps));
 
         if targetyear=="yr2000"
-            load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities","Fus","Fvs","Fxerr","Fyerr");
+            load("../ua_input/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities","Fus","Fvs","Fxerr","Fyerr");
         else
             if contains(domain,"AMUND")
-                load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_"+string(double(erase(targetyear,"yr")))+"-"+...
+                load("../ua_input/1_interpolants/GriddedInterpolants_"+string(double(erase(targetyear,"yr")))+"-"+...
                     string(double(erase(targetyear,"yr"))+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
                     "Fus","Fvs","Fxerr","Fyerr");
             elseif contains(domain,"SYNTH_PIG")
-                load("../GLUE_Data/GLUE_Interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+targetyear+".mat","Fus","Fvs","Fxerr","Fyerr");
+                load("../ua_input/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+targetyear+".mat","Fus","Fvs","Fxerr","Fyerr");
             end
         end
         uxtarget = Fus(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
@@ -630,14 +630,14 @@ switch diagnostic_to_plot
 
         % observed change in ice-sheet geometry
         if contains(domain,"AMUND")
-            load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(startyear,"yr")+"_EXTRUDED","Fs","Fb");
+            load("../ua_input/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(startyear,"yr")+"_EXTRUDED","Fs","Fb");
             hstart = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
-            load("../GLUE_Data/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(targetyear,"yr")+"_EXTRUDED","Fs","Fb");
+            load("../ua_input/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(targetyear,"yr")+"_EXTRUDED","Fs","Fb");
             htarget = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
         elseif contains(domain,"SYNTH_PIG")
-            load("../GLUE_Data/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+startyear,"Fs","Fb");
+            load("../ua_input/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+startyear,"Fs","Fb");
             hstart = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
-            load("../GLUE_Data/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+targetyear,"Fs","Fb");
+            load("../ua_input/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+targetyear,"Fs","Fb");
             htarget = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
         end
 

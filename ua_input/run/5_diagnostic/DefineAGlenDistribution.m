@@ -16,7 +16,7 @@ function [UserVar,AGlen,n]=DefineAGlenDistribution(UserVar,CtrlVar,MUA,time,s,b,
 % REQUIRES
 %   Ua source code; Create_ExtrudedFields_GriddedInterpolants and ExtrudeField (ua_input/1_interpolants),
 %   which need to be on the MATLAB path at run time; the 1996-2003 velocity and the
-%   2000 geometry interpolants in <datafolder>/GLUE_Interpolants
+%   2000 geometry interpolants in <datafolder>/1_interpolants
 
 AGlenFile = UserVar.NameOfFileForReadingAGlenEstimate;
 
@@ -52,8 +52,8 @@ if tmp.MUA.Nnodes ~= MUA.Nnodes % something is different between the meshes
         AGlen_r(Ind) = 0;
         % define gridded interpolant of original AGlen
         FAGlen_r = griddedInterpolant(X_r,Y_r,AGlen_r);
-        Velinterpolantfile = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
-        Geominterpolantfile = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-2000.mat";
+        Velinterpolantfile = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
+        Geominterpolantfile = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000.mat";
         Create_ExtrudedFields_GriddedInterpolants(Velinterpolantfile,Geominterpolantfile,FAGlen_r,0,"-scalar-"+prefix_ExtrudedAGlenFileToRead); clearvars FAGlen_r;
     end
 

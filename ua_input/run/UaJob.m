@@ -3,9 +3,9 @@ function UserVar = UaJob(RunTable,ind,UserVar,pgid)
 %
 % PURPOSE
 %   Called by UaWrapper for each inverse cycle, spinup cycle or diagnostic run.
-%   Copies the latest Ua user files from the master folder ./GLUE_<type>_9999 to the
+%   Copies the latest Ua user files from the master folder (./4_inverse or ./5_diagnostic) to the
 %   experiment folder, makes sure the experiment run table exists (copy of
-%   RunTable_GLUE_<type>_9999.csv), logs the start of the run in the global and
+%   EmptyTable.csv of the master folder), logs the start of the run in the global and
 %   experiment run tables (SubmissionTime, Submitted=1, Running=1, pgid), changes into
 %   the experiment folder and runs Ua (Ua2D). Errors in Ua are caught and logged
 %   to UserVar.fid_experror (UserVar.Error=1, UserVar.Breakout=1).
@@ -25,11 +25,13 @@ function UserVar = UaJob(RunTable,ind,UserVar,pgid)
 %   Ua source code (Ua2D); ReadWritetable (ua_input/run)
 
 %% copy latest Ua run files from master folder to experiment folder
-copyfile("./GLUE_"+UserVar.type+"_9999/*.m",UserVar.casefolder+"/"+UserVar.Experiment);
+% master folder of the run type: 4_inverse or 5_diagnostic
+masterfolder = "4_inverse"; if strcmp(UserVar.type,"Diagnostic"), masterfolder = "5_diagnostic"; end
+copyfile("./"+masterfolder+"/*.m",UserVar.casefolder+"/"+UserVar.Experiment);
 
 %% check if experiment runtable exists, otherwise, create a new one
 if ~isfile(UserVar.runtable_exp)
-    copyfile("./GLUE_"+UserVar.type+"_9999/RunTable_GLUE_"+UserVar.type+"_9999.csv",UserVar.runtable_exp);
+    copyfile("./"+masterfolder+"/EmptyTable.csv",UserVar.runtable_exp);
 end
 
 %% log changes in tables

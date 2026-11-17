@@ -4,7 +4,7 @@ function AMUND_GenerateBaseMesh
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % This script needs the circum-Antarctic (ANT) refined base mesh (files
-% ANT_basemesh_... and ANT_meshboundarycoordinates_... in ../GLUE_MeshData),
+% ANT_basemesh_... and ANT_meshboundarycoordinates_... in ../2_meshing),
 % which can be obtained upon request from the author.
 % This script documents how the AMUND meshes were derived. The
 % resulting AMUND meshes, boundaries and fixed boundary points are provided
@@ -24,7 +24,7 @@ function AMUND_GenerateBaseMesh
 %   - basins_IMBIE_v2.mat : IMBIE v2 basin outlines (struct with x, y, name;
 %       read with Define_Quantity_PerBasin). Data: can be obtained upon request from the author, see README.
 %   - the ANT refined base mesh: DefineBaseMesh locates the files
-%       (<UserVar.datafolder>/GLUE_MeshData/ANT_basemesh_<ANT_BaseMesh>_extrudemesh1_variableboundaryres1.mat
+%       (<UserVar.datafolder>/2_meshing/ANT_basemesh_<ANT_BaseMesh>_extrudemesh1_variableboundaryres1.mat
 %       and ANT_meshboundarycoordinates_...), and ApplyMeshModifications
 %       cuts it to the ice front of the year UserVar.Geometry and writes
 %       "./_InitialMesh.mat" (since UserVar.Experiment is empty), which is
@@ -39,7 +39,7 @@ function AMUND_GenerateBaseMesh
 %   AMUND_fixedboundarypoints_<same tag>.mat     : xOuter, yOuter
 %   Also written as by-products of ApplyMeshModifications:
 %   _InitialMesh.mat and _MeshBoundaryCoordinates.mat.
-%   DefineBaseMesh expects the AMUND files in <datafolder>/GLUE_MeshData:
+%   DefineBaseMesh expects the AMUND files in <datafolder>/2_meshing:
 %   copy them there.
 %
 % REQUIRES (see README)

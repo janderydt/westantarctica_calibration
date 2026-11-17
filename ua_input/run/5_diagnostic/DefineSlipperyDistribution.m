@@ -52,8 +52,8 @@ if tmp.MUA.Nnodes ~= MUA.Nnodes % something is different between the meshes
         C_r(Ind) = 0;
         % define gridded interpolant of original C
         FC_r = griddedInterpolant(X_r,Y_r,C_r);
-        Velinterpolantfile = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
-        Geominterpolantfile = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-2000.mat";
+        Velinterpolantfile = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
+        Geominterpolantfile = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000.mat";
         Create_ExtrudedFields_GriddedInterpolants(Velinterpolantfile,Geominterpolantfile,FC_r,0,"-scalar-"+prefix_ExtrudedSlipperinessFileToRead); clearvars FC_r;
     end
 

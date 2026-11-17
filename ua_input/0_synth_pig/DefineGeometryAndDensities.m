@@ -6,11 +6,11 @@ function [UserVar,s,b,S,B,rho,rhow,g]=DefineGeometryAndDensities(UserVar,CtrlVar
 %   The bed B is a sinusoidal trough across the glacier (Ly = 50 km: -1100 m in the middle and -500 m at the sides for a
 %   domain that is 50 km wide) with a Gaussian ridge (height 300 m, width 11 km, at x = 250 km), plus small-scale
 %   topography (white noise smoothed with a Gaussian kernel and multiplied by 500, generated once with
-%   rng("default") so that it is reproducible), and smoothed with a Helmholtz filter (length scale 4 km). If CtrlVar.Experiment contains "calving", a Gaussian overdeepening is
-%   added upstream of the ridge (for testing). The ocean surface is S = 0, the ice density 917 kg/m^3, the ocean
+%   rng("default") so that it is reproducible), and smoothed with a Helmholtz filter (length scale 4 km).
+%   The ocean surface is S = 0, the ice density 917 kg/m^3, the ocean
 %   density 1027 kg/m^3.
 %   The surface s and the base b depend on the type of run:
-%     - inverse run, or Experiment contains "nochange": from the result file of the synthetic experiment "warm"
+%     - inverse run: from the result file of the synthetic experiment "warm"
 %       after 15 years (./ResultsFiles/ResultsFile-warm-000015yr.mat);
 %     - time-dependent run without restart: Experiment "spinup": linear surface (400 m at the upstream end, 100 m at the
 %       downstream end) on the bed (b = B); Experiment "cold": surface and base from the restart file
@@ -88,20 +88,10 @@ L=4e3 ;  % Smoothing length scale
 [~,SmoothedField]=HelmholtzEquation([],CtrlVar,MUA,1,L^2,B,0); 
 B = SmoothedField;
 
-% for testing
-if contains(CtrlVar.Experiment,"calving")
-    % add guassian overdeepening in the bed upstream of ridge so it creates a lake
-    x_m = 2.2e5;
-    y_m = 0;
-    sigma = 10e3;
-    overdeepening = -250*exp(-((x_m-x).^2 + (y_m-y).^2) / (2*sigma^2));
-    B = B + overdeepening;
-end
-
 S = B*0;
 
 %% Surface s and base b, depending on the type of run
-if CtrlVar.InverseRun || contains(CtrlVar.Experiment,"nochange")
+if CtrlVar.InverseRun
     synth_exp = "warm";
     yr = "15";
     tmp = load("./ResultsFiles/ResultsFile-"+synth_exp+"-0000"+yr+"yr.mat");
@@ -124,7 +114,7 @@ else
     b=[];
 end
 
-if ~CtrlVar.TimeDependentRun && ~CtrlVar.InverseRun && ~contains(CtrlVar.Experiment,"nochange")
+if ~CtrlVar.TimeDependentRun && ~CtrlVar.InverseRun
     synth_exp = "warm";
     yr = "35";
     tmp = load("./ResultsFiles/ResultsFile-"+synth_exp+"-0000"+yr+"yr.mat");

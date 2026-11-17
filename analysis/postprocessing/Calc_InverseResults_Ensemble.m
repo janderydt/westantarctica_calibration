@@ -8,14 +8,14 @@ function Calc_InverseResults_Ensemble
 % PURPOSE
 %   For all (finished) experiments of the inverse run table within UserVar.idrange that have not been analysed yet and
 %   for both inverse cycles (1: velocities only, 2: after spinup, velocities and dh/dt): reads the restart file
-%   <home>/GLUE_Inverse/cases/<Domain>/<Domain>_Inverse_<ExpID>/<Domain>_Inverse_<ExpID>-RestartFile_InverseCycle<cycle>.mat
+%   <home>/4_inverse/cases/<Domain>/<Domain>_Inverse_<ExpID>/<Domain>_Inverse_<ExpID>-RestartFile_InverseCycle<cycle>.mat
 %   and stores in the structure data (one element per experiment): InverseExpID, cycle, m, n, SlidingLaw, the
 %   regularisation parameters gaA, gaC, gsA, gsC, dhdt_err, startgeometry, the number of iterations (niter), the flux across
 %   the grounding line (qGL) and the open boundary (qOB) per basin (summed and divided by 1e12), the total balanced
 %   melt per basin (TotalBalancedMelt), the nodal balanced melt rate (BalancedMeltMap, CalcIceShelfMeltRates), and the
 %   final misfit and regularisation of the inversion. The file is updated incrementally.
 %   Settings as supplied: the AMUND posterior sample ("HPDSample") run table. For SYNTH_PIG (earlier runs):
-%   UserVar.Table = UserVar.home+"GLUE_Inverse/RunTable_SYNTH_PIG_nsmbl_Weertmanyr30_Adjoint_Weertman_Enriched0_24-10-2025.csv",
+%   UserVar.Table = UserVar.home+"4_inverse/RunTable_SYNTH_PIG_nsmbl_Weertmanyr30_Adjoint_Weertman_Enriched0_24-10-2025.csv",
 %   inversiondata_filename = "./InversionData/SYNTH_PIG/SYNTH_PIG_Weertmanyr30_inversiondata_Weertman.mat".
 %
 % OUTPUT
@@ -29,11 +29,11 @@ function Calc_InverseResults_Ensemble
 
 only_finished=1;
 
-% home folder of the Ua experiments (contains GLUE_Inverse)
+% home folder of the Ua experiments (contains 4_inverse)
 UserVar.home = "/path/to/home/";
 UserVar.type = "Inverse";
 
-UserVar.Table = UserVar.home+"GLUE_"+UserVar.type+"/RunTable_AMUND_nsmbl_Adjoint_HPDSample_Enriched0_19-11-2025.csv";
+UserVar.Table = UserVar.home+"4_inverse/RunTable_AMUND_nsmbl_Adjoint_HPDSample_Enriched0_19-11-2025.csv";
 UserVar.idrange = [100000 100999];
 
 inversiondata_filename = "./InversionData/AMUND/AMUND_2000_inversiondata_HPDSample.mat";
@@ -99,7 +99,7 @@ for tt=1:numel(UserVar.Table)
     for ii=1:numel(Ind)
 
         UserVar.domain = RunTable{Ind(ii),"Domain"};
-        folder = UserVar.home+"/GLUE_"+UserVar.type+"/cases/"+UserVar.domain+"/"+UserVar.domain+"_Inverse_"+ExpID(Ind(ii));
+        folder = UserVar.home+"/4_inverse/cases/"+UserVar.domain+"/"+UserVar.domain+"_Inverse_"+ExpID(Ind(ii));
 
         % store in data array
         if isempty(data)

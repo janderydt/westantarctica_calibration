@@ -25,7 +25,7 @@ function UserVar = GetUserVar_Inverse(RunTable,ind,UserVar)
 %   UserVar with, among others: InverseCycle/SpinupCycle (which type of run),
 %   Inverse.* and Spinup.* (iterations, years, regularisation, measurements),
 %   file names for geometry, density, velocity and dhdt interpolants (in
-%   <datafolder>/GLUE_Interpolants), mesh (DefineBaseMesh,
+%   <datafolder>/1_interpolants), mesh (DefineBaseMesh,
 %   ApplyMeshModifications), sliding law, rheology, thickness constraints.
 %
 % START VALUES (run table columns startC, startAglen)
@@ -34,7 +34,7 @@ function UserVar = GetUserVar_Inverse(RunTable,ind,UserVar)
 %   -9999   : (C only) initial guess from the measured velocities
 %   0       : constant prior value (priorC, priorAGlen); the run tables of the ensemble use 0
 %
-% INTERPOLANT FILES in <datafolder>/GLUE_Interpolants (can be obtained upon request from the author, see README)
+% INTERPOLANT FILES in <datafolder>/1_interpolants (can be obtained upon request from the author, see README)
 %   AMUND_nsmbl    : GriddedInterpolants_Geometry_01-Jun-<year>_EXTRUDED.mat,
 %                    GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat,
 %                    GriddedInterpolants_dhdt_01-Jun-<year>.mat
@@ -93,12 +93,12 @@ fprintf(UserVar.fid_experimentlog,class(Geometry));
 if ismember(string(UserVar.Domain),"AMUND_nsmbl")
     switch Geometry
         case {'2000','2009','2014','2018','2020'}
-            UserVar.DensityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+string(Geometry)+"_EXTRUDED.mat";
+            UserVar.DensityInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+string(Geometry)+"_EXTRUDED.mat";
         otherwise
             error("ExpID "+string(RunTable{ind,"ExpID"})+": Do not recognise Geometry flag in RunTable");
     end
 elseif ismember(string(UserVar.Domain),"SYNTH_PIG_nsmbl")
-    UserVar.DensityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+string(Geometry)+".mat";
+    UserVar.DensityInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+string(Geometry)+".mat";
     
     fprintf(UserVar.fid_experimentlog,"%s",UserVar.DensityInterpolants);
     if ~exist(UserVar.DensityInterpolants,"file")
@@ -114,9 +114,9 @@ UserVar.Geometry = RunTable{ind,"startGeometry"};
 UserVar.Inverse.Measurements = RunTable{ind,"Measurements"}{:};
 if contains(UserVar.Inverse.Measurements,"dhdt")
     if ismember(string(UserVar.Domain),"AMUND_nsmbl")
-        UserVar.dhdtInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_dhdt_01-Jun-"+string(UserVar.Geometry)+".mat";   
+        UserVar.dhdtInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_dhdt_01-Jun-"+string(UserVar.Geometry)+".mat";   
     elseif ismember(string(UserVar.Domain),"SYNTH_PIG_nsmbl")
-        UserVar.dhdtInterpolants = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_dhdt_SYNTH_PIG_"+string(UserVar.Geometry)+".mat";
+        UserVar.dhdtInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_dhdt_SYNTH_PIG_"+string(UserVar.Geometry)+".mat";
     else
         error("Do not recognize case "+string(UserVar.Domain));
     end
@@ -392,12 +392,12 @@ UserVar.Geometry = RunTable{ind,"startGeometry"};
 if ismember(string(UserVar.Domain),"AMUND_nsmbl")
     switch UserVar.Geometry
         case {'2000','2009','2014','2018','2020'}
-            UserVar.GeometryInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_Geometry_01-Jun-"+num2str(UserVar.Geometry)+"_EXTRUDED.mat";
+            UserVar.GeometryInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+num2str(UserVar.Geometry)+"_EXTRUDED.mat";
         otherwise
             error(['ExpID ',RunTable{ind,"ExpID"},': Do not recognise Geometry flag in RunTable.']);
     end
 elseif ismember(string(UserVar.Domain),"SYNTH_PIG_nsmbl")
-    UserVar.GeometryInterpolants = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+string(UserVar.Geometry)+".mat";
+    UserVar.GeometryInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+string(UserVar.Geometry)+".mat";
 end
 
 end
@@ -409,14 +409,14 @@ UserVar.Velocity = RunTable{ind,"Velocity"};
 if ismember(string(UserVar.Domain),"AMUND_nsmbl")
     switch UserVar.Velocity
         case '2000'
-            UserVar.VelocityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
+            UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
         case {'2009','2014','2018','2020'}
-            UserVar.VelocityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/GriddedInterpolants_"+string(UserVar.Velocity)+"-"+string(UserVar.Velocity+1)+"_MeaSUREs_ITSLIVE_Velocities.mat";
+            UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_"+string(UserVar.Velocity)+"-"+string(UserVar.Velocity+1)+"_MeaSUREs_ITSLIVE_Velocities.mat";
         otherwise
             error(['ExpID ',RunTable{ind,"ExpID"},': Do not recognise Velocity flag in RunTable.']);
     end
 elseif ismember(string(UserVar.Domain),"SYNTH_PIG_nsmbl")
-    UserVar.VelocityInterpolants = UserVar.datafolder+"/GLUE_Interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+string(UserVar.Velocity)+".mat";
+    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+string(UserVar.Velocity)+".mat";
 end
 
 end

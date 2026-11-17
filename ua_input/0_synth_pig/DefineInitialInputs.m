@@ -16,10 +16,6 @@ function [UserVar,CtrlVar,MeshBoundaryCoordinates]=DefineInitialInputs(UserVar,C
 %     "cold", "warm" : transient run with low or high basal melt (DefineMassBalance); runs that are not inversions read
 %                 the estimates of C and AGlen from C-Estimate_<SlidingLaw>_m<m>.mat and
 %                 AGlen-Estimate_<SlidingLaw>_m<m>.mat; output every 10 years ("cold") or every year ("warm")
-%     "calving" : calving experiment with the level set method (DefineCalving; restart file cold-RestartFile.mat, output
-%                 every day)
-%     "nochange": geometry from the result file of the experiment "warm" after 15 years (DefineGeometryAndDensities)
-%     "test"    : the estimates of C and AGlen are read from C-Estimate.mat and AGlen-Estimate.mat
 %   Output (results files): DefineOutputs.
 %
 % FILES READ
@@ -58,14 +54,6 @@ if ~CtrlVar.TimeDependentRun && ~CtrlVar.InverseRun
     CtrlVar.TotalNumberOfForwardRunSteps=1;
 else
     CtrlVar.TotalNumberOfForwardRunSteps=1e10;
-end
-if contains(CtrlVar.Experiment,"calving")
-    CtrlVar.LevelSetMethod=1;
-    CtrlVar.LevelSetEvolution="-By solving the level set equation-" ;
-    UserVar.RunType="-c0isGL0-"; %initial calving front is grounding line
-    CtrlVar.LevelSetMethodMassBalanceFeedbackCoeffLin=-100;
-    CtrlVar.LevelSetInfoLevel=1;
-    CtrlVar.LevelSetInitialisationInterval=1;
 end
 
 %% Grid options
@@ -159,18 +147,12 @@ CtrlVar.InfoLevel=1;
 
 CtrlVar.NameOfRestartFiletoWrite = CtrlVar.Experiment+"-RestartFile.mat";
 
-if contains(CtrlVar.Experiment,"calving")
-    CtrlVar.NameOfRestartFiletoRead = "cold-RestartFile.mat";
-else
-    CtrlVar.NameOfRestartFiletoRead = CtrlVar.NameOfRestartFiletoWrite;
-end
+CtrlVar.NameOfRestartFiletoRead = CtrlVar.NameOfRestartFiletoWrite;
 CtrlVar.CreateOutputsBeginningOfRun=1;
 CtrlVar.CreateOutputsEndOfRun=1; % always call DefineOutputs at the end of a run
 
 if contains(CtrlVar.Experiment,["spinup","cold"])
     CtrlVar.DefineOutputsDt=10; % write output files at given interval (yrs)
-elseif contains(CtrlVar.Experiment,"calving")
-    CtrlVar.DefineOutputsDt=1/365.25;
 else
     CtrlVar.DefineOutputsDt=1;
 end
@@ -179,10 +161,7 @@ if CtrlVar.InverseRun
     CtrlVar.NameOfFileForSavingSlipperinessEstimate=CtrlVar.Experiment+"_C-Estimate.mat";
     CtrlVar.NameOfFileForSavingAGlenEstimate=CtrlVar.Experiment+"_AGlen-Estimate.mat";
 else
-    if contains(CtrlVar.Experiment,"test")
-        CtrlVar.NameOfFileForReadingSlipperinessEstimate="C-Estimate.mat";
-        CtrlVar.NameOfFileForReadingAGlenEstimate="AGlen-Estimate.mat";
-    elseif contains(CtrlVar.Experiment,["cold","warm"])
+    if contains(CtrlVar.Experiment,["cold","warm"])
         CtrlVar.NameOfFileForReadingSlipperinessEstimate="C-Estimate_"+string(CtrlVar.SlidingLaw)+"_m"+string(UserVar.m)+".mat";
         CtrlVar.NameOfFileForReadingAGlenEstimate="AGlen-Estimate_"+string(CtrlVar.SlidingLaw)+"_m"+string(UserVar.m)+".mat";
     else

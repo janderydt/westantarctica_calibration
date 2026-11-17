@@ -5,13 +5,13 @@ function [UserVar,as,ab]=DefineMassBalance(UserVar,CtrlVar,MUA,F)
 %   Surface mass balance as (m ice equivalent/yr), from
 %     - SYNTH_PIG_nsmbl: an analytical function of x
 %     - AMUND_nsmbl    : RACMO climatology 2000-2018 (m w.e./yr) from
-%                        <datafolder>/GLUE_Interpolants/ScatteredInterpolants_SMB.mat
+%                        <datafolder>/1_interpolants/ScatteredInterpolants_SMB.mat
 %                        (variable Fsmb_RACMO), converted with the nodal density
 %   Basal mass balance ab: zero for inverse runs. In spinup runs, "balanced
 %   melt" on ocean-connected floating nodes: ab = -dhdt, so that the thickness of
 %   the ice shelves stays approximately constant. In the second and later spinup
 %   cycles, ab=0 and as is corrected with the observed dhdt (file
-%   <datafolder>/GLUE_Interpolants/dhdt_<year>_<year+1>.mat) while the ice shelf
+%   <datafolder>/1_interpolants/dhdt_<year>_<year+1>.mat) while the ice shelf
 %   thickness is fixed (see DefineBoundaryConditions).
 %
 % REQUIRES
@@ -36,7 +36,7 @@ if isempty(Fsmb)
 
     elseif ismember(string(UserVar.Domain),"AMUND_nsmbl")
 
-        load(UserVar.datafolder+"GLUE_Interpolants/ScatteredInterpolants_SMB.mat","Fsmb_RACMO");
+        load(UserVar.datafolder+"1_interpolants/ScatteredInterpolants_SMB.mat","Fsmb_RACMO");
     
         % RACMO climatology between 2000 and 2018
         Istart = find(contains(string(Fsmb_RACMO.years),"2000"));
@@ -90,7 +90,7 @@ if UserVar.SpinupCycle
 
         ab = 0*x; % ab can be zero because we keep ice shelf thickness fixed as boundary condition
 
-        dhdt_filename = UserVar.datafolder+"/GLUE_Interpolants/dhdt_"+string(UserVar.Geometry)+"_"+string(UserVar.Geometry+1)+".mat";
+        dhdt_filename = UserVar.datafolder+"/1_interpolants/dhdt_"+string(UserVar.Geometry)+"_"+string(UserVar.Geometry+1)+".mat";
 
         if exist(dhdt_filename,"file")==2
 

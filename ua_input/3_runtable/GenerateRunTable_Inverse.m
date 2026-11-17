@@ -59,7 +59,7 @@ function GenerateRunTable_Inverse(Domain,X,GradientCalc,SlidingLaw_input,Enrich,
 %
 %   REQUIRES:
 %   ReadWritetable.m (in this repository: ua_input/run; must be on the MATLAB path), EmptyTable.csv
-%   (provided in this folder; the script expects it in ../GLUE_Inverse), and the Statistics and Machine
+%   (provided in this folder), and the Statistics and Machine
 %   Learning Toolbox (knnsearch).
 %
 %   See also GENERATESAMPLESPACE_INVERSE, READWRITETABLE.
@@ -85,7 +85,7 @@ UserVar.type = "Inverse";
 % Start from a template with the correct column headers if this exact
 % table doesn't already exist.
 if ~exist(UserVar.Table,"file")
-    copyfile("../GLUE_Inverse/EmptyTable.csv",UserVar.Table);
+    copyfile("EmptyTable.csv",UserVar.Table);
 end
 
 RunTable = ReadWritetable(UserVar,UserVar.Table,[],'read');

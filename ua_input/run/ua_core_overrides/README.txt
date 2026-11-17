@@ -12,5 +12,5 @@ InversionUsingMatlabOptimizationToolbox3.m
 rLineminUa.m, BackTracking.m, CalcMeshDerivatives.m
     Versions of these Ua functions that were used in the runs.
 
-Both master folders (GLUE_Inverse_9999 and GLUE_Diagnostic_9999) need these files: UaJob
+Both master folders (4_inverse and 5_diagnostic) need these files: UaJob
 copies the *.m files of the master folder into every experiment folder.

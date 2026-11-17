@@ -29,10 +29,10 @@ function UaWrapper(ua_config,pgid,type,row_number,expid_new)
 %   expid_new  : unique experiment id for row_number (required with row_number)
 %
 % FOLDER LAYOUT (home = current folder when MATLAB is started)
-%   <home>/GLUE_<type>_9999/        master folder: Ua user files (*.m) and the empty run
-%                                   table RunTable_GLUE_<type>_9999.csv
+%   <home>/4_inverse/, <home>/5_diagnostic/   master folders of the run types Inverse and Diagnostic:
+%                                   Ua user files (*.m) and the empty run table EmptyTable.csv
 %   <home>/cases/<Domain>/<Domain>_<type>_<ExpID>/   experiment folders (created)
-%   <home>/../GLUE_Data/            GLUE_MeshData, GLUE_Interpolants, GLUE_HelperFunctions
+%   <home>/../                      (= ua_input) with the folders 1_interpolants and 2_meshing (data)
 %   Log files: <home>/jobs_master_<hostname>.log, <experiment>.log in each experiment
 %   folder, stderr_jobid<pgid>_expid<ExpID>.out in <home>.
 %
@@ -40,7 +40,7 @@ function UaWrapper(ua_config,pgid,type,row_number,expid_new)
 %   A Ua installation (UaSource, https://github.com/GHilmarG/UaSource) set up on the path in
 %   the host block below; ReadWritetable, GetUserVar_Inverse (and
 %   GetUserVar_Diagnostic for that run type),
-%   UaJob, CleanUp. The helper functions (folder GLUE_HelperFunctions, other third-party functions) and the interpolant files (GLUE_Interpolants) must be on the MATLAB path.
+%   UaJob, CleanUp. The helper functions (third-party functions, see README) and the interpolant files (1_interpolants) must be on the MATLAB path.
 %   An external launcher that starts MATLAB and watches the <pgid>_job_submitted file
 %   is not part of this repository.
 
@@ -170,7 +170,7 @@ end
 %% launch jobs
 % initialize some variables
 UserVar.configfile = ua_config;
-UserVar.datafolder = UserVar.home + "/../GLUE_Data/";
+UserVar.datafolder = UserVar.home + "/../";
 UserVar.Restart = 0;
 something_submitted = 0; kk=1;
 
@@ -369,7 +369,7 @@ end
 %% deal with new jobs if all existing jobs have been dealt with
 % A new experiment gets a unique ExpID (random number in UserVar.idrange, unless given
 % as an argument), its own folder cases/<Domain>/<Domain>_<type>_<ExpID> (a copy of the
-% master folder GLUE_<type>_9999) and is run in the same way as an existing one.
+% master folder 4_inverse or 5_diagnostic) and is run in the same way as an existing one.
 if ~isempty(Inew)
 
     ind = Inew(1);
@@ -403,7 +403,8 @@ if ~isempty(Inew)
     
     % make copy of master folder for new experiment
     % if new folder already exists: rename first
-    sourcefolder = UserVar.home+"/GLUE_"+type+"_9999/";
+    masterfolder = "4_inverse"; if strcmp(type,"Diagnostic"), masterfolder = "5_diagnostic"; end
+    sourcefolder = UserVar.home+"/"+masterfolder+"/";
     UserVar.casefolder = UserVar.home + "/cases/" + UserVar.Domain +"/";
     if ~exist(UserVar.casefolder,"dir")
         cmd = "mkdir "+UserVar.casefolder;
@@ -426,7 +427,7 @@ if ~isempty(Inew)
 
     % rename RunTable file
     UserVar.runtable_exp = UserVar.casefolder + "/" + UserVar.Experiment + "/RunTable_" + UserVar.Experiment + ".csv";
-    movefile(newfolder+"/RunTable_GLUE_"+UserVar.type+"_9999.csv",UserVar.runtable_exp);
+    movefile(newfolder+"/EmptyTable.csv",UserVar.runtable_exp);
 
     % initialize experiment log and error files
     logfile = UserVar.casefolder+"/"+UserVar.Experiment+"/"+UserVar.Experiment+".log";

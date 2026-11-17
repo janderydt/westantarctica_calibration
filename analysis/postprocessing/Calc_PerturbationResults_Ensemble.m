@@ -18,7 +18,7 @@ function Calc_PerturbationResults_Ensemble
 %
 % INPUTS
 %   Diagnostic run table (UserVar.Table), diagnostic results
-%   <UserVar.home>/GLUE_Diagnostic/cases/<Domain>/<Domain>_Diagnostic_<ExpID>/ResultsFiles/*.mat,
+%   <UserVar.home>/5_diagnostic/cases/<Domain>/<Domain>_Diagnostic_<ExpID>/ResultsFiles/*.mat,
 %   inversion data (inversiondata_filename; structure data with InverseExpID, gaC, gaA, gsC, gsA, dhdt_err,
 %   misfit, startgeometry for each inversion; created by Calc_InverseResults_Ensemble), basins_IMBIE_v2.mat (IMBIE v2 basin outlines; data that
 %   can be obtained upon request from the author)
@@ -35,14 +35,14 @@ function Calc_PerturbationResults_Ensemble
 %% MAKE CHANGES IN THIS BLOCK AS REQUIRED
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% home folder of the Ua experiments (contains GLUE_Diagnostic)
+% home folder of the Ua experiments (contains 5_diagnostic)
 UserVar.home = "/path/to/home/";
 UserVar.type = "Diagnostic";
 
-% settings for SYNTH_PIG (earlier runs): UserVar.Table = UserVar.home+"GLUE_Diagnostic/RunTable_Diagnostic_SYNTH_PIG_nsmbl__OLD-Weertmanyr30__NEW-Weertmanyr75.csv",
+% settings for SYNTH_PIG (earlier runs): UserVar.Table = UserVar.home+"5_diagnostic/RunTable_Diagnostic_SYNTH_PIG_nsmbl__OLD-Weertmanyr30__NEW-Weertmanyr75.csv",
 % idrange = [750000 759999], slidinglaws = ["Weertman" "Umbi"],
 % inversiondata_filename = "./InversionData/SYNTH_PIG/SYNTH_PIG_Weertmanyr30_inversiondata_"+slidinglaws+".mat"
-UserVar.Table = UserVar.home+"GLUE_Diagnostic/RunTable_Diagnostic_AMUND_nsmbl__HPDSample__OLD-2000__NEW-2020.csv";
+UserVar.Table = UserVar.home+"5_diagnostic/RunTable_Diagnostic_AMUND_nsmbl__HPDSample__OLD-2000__NEW-2020.csv";
 UserVar.idrange = [120000 129999];
 slidinglaws = [];
 inversiondata_filename = "./InversionData/AMUND/AMUND_2000_inversiondata_HPDSample.mat";
@@ -120,7 +120,7 @@ for tt=1:numel(UserVar.Table)
         InverseCycle = RunTable{Ind(ii),"InverseCycleA"};
         Domain = RunTable{Ind(ii),"Domain"};
         Ind_inverse = find([data_inverse(:).InverseExpID]==InverseExpID);
-        folder = UserVar.home+"/GLUE_Diagnostic/cases/"+Domain+"/"+Domain+"_Diagnostic_"+ExpID(Ind(ii));
+        folder = UserVar.home+"/5_diagnostic/cases/"+Domain+"/"+Domain+"_Diagnostic_"+ExpID(Ind(ii));
         outputfiles = dir(folder+"/ResultsFiles/*.mat");
 
         if ~isempty(outputfiles)
