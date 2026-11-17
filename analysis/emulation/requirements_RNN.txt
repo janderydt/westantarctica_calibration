@@ -1,0 +1,8 @@
+# Draft requirements for RNN_network_optimisation_JDR_v5.py (versions to be confirmed).
+# The script must be run in a virtual environment whose name contains "tf213_env" (check at the top of the script).
+# TensorFlow 2.13 with Keras 2 is required because the saved models are imported in MATLAB.
+tensorflow==2.13.*
+keras==2.13.*
+keras-tuner
+numpy
+scipy
