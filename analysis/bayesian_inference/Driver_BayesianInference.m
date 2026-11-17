@@ -1,10 +1,10 @@
-function main_BayesianInference_u
-% main_BayesianInference_u  Run the Bayesian inference (calc_BayesianInference_u) for one or several settings.
+function Driver_BayesianInference
+% Driver_BayesianInference  Run the Bayesian inference (Calc_BayesianInference) for one or several settings.
 %
 % PURPOSE
 %   Defines the settings of the inference in a table (one row per run: range l and standard deviation std_ua of the
 %   Ua (model) errors, MCMC parameters, optionally the years) and the emulators to use, then calls
-%   calc_BayesianInference_u for each row.
+%   Calc_BayesianInference for each row.
 %
 % SETTINGS FOR AMUND (as set below)
 %   l = 50 km, std_ua = 40 m/yr, AIES sampler with a=2, 100e3 steps and 25 chains, three emulators
@@ -16,7 +16,7 @@ function main_BayesianInference_u
 %   year pair "Weertmanyr30-Weertmanyr35", "-Weertmanyr40", "-Weertmanyr45", "-Weertmanyr50", "-Weertmanyr75".
 %
 % REQUIRES
-%   calc_BayesianInference_u and its requirements; the working folder (below) has to contain the folders
+%   Calc_BayesianInference and its requirements; the working folder (below) has to contain the folders
 %   Emulators, DiagnosticData (and BayesianAnalysis, created if needed).
 
 % make sure we're in the right folder
@@ -73,7 +73,7 @@ for ii=1:size(T,1)
     catch
         unfold(UserVar);
     end
-    calc_BayesianInference_u(UserVar);
-    clear calc_BayesianInference_u; % clears the persistent emulators of the previous run
+    Calc_BayesianInference(UserVar);
+    clear Calc_BayesianInference; % clears the persistent emulators of the previous run
     close all;
 end

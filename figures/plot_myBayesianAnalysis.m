@@ -1,27 +1,27 @@
-function plot_BayesianAnalysisResults_u(myBayesianAnalysis,UserVar)
-% plot_BayesianAnalysisResults_u  Plot the result of a Bayesian analysis (Figures 3 and 6).
+function plot_myBayesianAnalysis(myBayesianAnalysis,UserVar)
+% plot_myBayesianAnalysis  Plot the result of a Bayesian analysis (Figures 3 and 6).
 %
 % PURPOSE
-%   Called at the end of calc_BayesianInference_u (UserVar.do_plots=1) or without arguments (file selection window; one
+%   Called at the end of Calc_BayesianInference (UserVar.do_plots=1) or without arguments (file selection window; one
 %   or two analyses; saved in the file as UserVar and myBayesianAnalysis, with myPosteriorDist). For each analysis:
 %   (1) the MCMC chains of all parameters (figure 'MCMC_Chains');
 %   (2) the "corner plot" (figure 'Distributions', saved as ./Figures/Aposterior_<name>.png): marginal posterior
 %       distributions (histograms of the last 10% of the chains, fitted marginals, prior, maximum a posteriori point
 %       MAP) on the diagonal and scatter plots of pairs of parameters below it. For AMUND the Ua training samples
-%       (ensemble members) and a sample of 10 points of the high-density region (95% of the density-weighted mass, calc_HPDsample; saved
+%       (ensemble members) and a sample of 10 points of the high-density region (95% of the density-weighted mass, Calc_HPDsample; saved
 %       in ./BayesianAnalysis/<domain>/ as X_HPD) are added; for SYNTH_PIG the true values (n = 3, m = 4);
 %   (3) AMUND only, after a question dialog: the difference between modelled and observed change in speed for each
 %       epoch, for user-chosen parameters (emulator) or the sample of the high-density region (the mean of the nearest Ua simulations),
 %       saved as ./Figures/Delta_u_Mod_vs_Meas_<name>_v<k>.png (inset of Figure 6).
 %
 % INPUTS
-%   myBayesianAnalysis, UserVar : as saved by calc_BayesianInference_u (optional)
+%   myBayesianAnalysis, UserVar : as saved by Calc_BayesianInference (optional)
 %
 % REQUIRES
-%   UQLab Rel. 2.0.0, calc_HPDsample (same folder), loadvelocitydata (same folder), cmocean, fig (third party),
+%   UQLab Rel. 2.0.0, Calc_HPDsample (same folder), loadvelocitydata (same folder), cmocean, fig (third party),
 %   PlotMeshScalarVariable, PlotGroundingLines (Ua); MATLAB Statistics and Machine Learning Toolbox (hist3,
 %   knnsearch, isoutlier), Deep Learning Toolbox with the Converter for TensorFlow Models; data in ./DiagnosticData and
-%   ./Emulators (see calc_BayesianInference_u)
+%   ./Emulators (see Calc_BayesianInference)
 
 gpuDevice([]);
 setenv('CUDA_VISIBLE_DEVICES','');
@@ -219,7 +219,7 @@ for Dist=1:numel(fname)
     %% load the samples of the high-density region
     fname_HPD = strrep(fname,"BayesianAnalysis","HPD");
     if ~exist(fname_HPD,"file")
-        X_HPD = calc_HPDsample(myPosteriorDist,10);
+        X_HPD = Calc_HPDsample(myPosteriorDist,10);
         % save to file
         save("./BayesianAnalysis/"+UserVar.domain+"/"+fname_HPD,"X_HPD");
     else
@@ -531,7 +531,7 @@ for Dist=1:numel(fname)
                 tmp = load("./DiagnosticData/AMUND/AMUND_Delta_u_"+UserVar.years(yy)+"_HPDSample.mat");
     
                 %% OBS
-                out = LoadVel(UserVar.domain,UserVar.dataformat(yy),UserVar.years(yy),0);
+                out = loadvelocitydata(UserVar.domain,UserVar.dataformat(yy),UserVar.years(yy),0);
                 years_tmp = split(UserVar.years(yy),"-");
                 yr1 = years_tmp(1);
                 yr2 = years_tmp(2);
@@ -667,13 +667,4 @@ for Dist=1:numel(fname)
     clearvars UserVar myBayesianAnalysis myPosteriorDist MAP Prior Post myPriorDist mySolver myResults
 end
 
-end
-
-function out = LoadVel(domain,dataformat,years,only_grounded_ice)
-% interface of loadvelocitydata (struct input)
-UserVar.domain = domain;
-UserVar.dataformat = dataformat;
-UserVar.years = years;
-UserVar.only_grounded_ice = only_grounded_ice;
-out = loadvelocitydata(UserVar);
 end

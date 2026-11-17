@@ -5,7 +5,7 @@ function Figure2_Plot_SYNTH_PIG_VelThick
 % Needs the results of the synthetic Ua experiments (these data can be obtained upon request from the author), see the load statements.
 %
 % PURPOSE
-%   (a) 3D view of the synthetic glacier after the 500 kyr spin-up with Weertman sliding ("cold_Weertman"), with the
+%   (a) 3D view of the synthetic glacier after 500 years of the spinup with the cold ocean temperature profile and Weertman sliding ("cold_Weertman"; "00500k000" in the file name is 500.000 years), with the
 %   grounding line and the surface velocity vectors; (b, c) ice thickness and speed at t0 = 30 years of the "warm"
 %   experiment; (d-i) changes in ice thickness (d-f) and in speed (g-i) between t0 and t1 = 35, 50, 75 years, with the
 %   grounding lines of t0 and t1. Saves ./Figure2.png.

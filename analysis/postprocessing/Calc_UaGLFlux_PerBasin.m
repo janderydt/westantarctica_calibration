@@ -2,7 +2,7 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 % Calc_UaGLFlux_PerBasin  Ice flux across the Ua grounding line, per basin.
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
-% Part of the postprocessing of the diagnostic results (see main_PerturbationResultsEnsemble); the diagnostic
+% Part of the postprocessing of the diagnostic results (see Calc_PerturbationResults_Ensemble); the diagnostic
 % results can be obtained upon request from the author.
 %
 % PURPOSE
@@ -13,7 +13,7 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 %   MUA, F, GF, CtrlVar : Ua mesh, fields (F.ub, F.vb, F.ud, F.vd, F.h, F.rho, F.GF), grounding-floating mask, CtrlVar
 %   B : structure with basin information (x, y: cell arrays with the basin outlines). One way to construct B is
 %       to use the IMBIE basin outlines (routines from C. Greene):
-%         B = load('basins_IMBIE_v2.mat'); B = RemoveIceRisesAndIslands(B);
+%         B = load('basins_IMBIE_v2.mat'); B = RemoveIceRisesAndIslands(B); (same folder)
 %       (basins_IMBIE_v2.mat: data; can be obtained upon request from the author)
 %
 % OUTPUTS

@@ -26,7 +26,7 @@ DIFFERENCES FROM THE ORIGINAL SCRIPT (RNN_network_optimisation_SRosier.py)
       Inputs in the .mat files: B_trunc and T_pct (original: Bs, Bv and sec_pct).
     - No normalisation in Python: the original normalises the inputs with a Normalization layer inside the model and
       the targets with a StandardScaler (saved with joblib); here the data are normalised in MATLAB
-      (prep_EmulatorTrainingData_deltaU.m) and the scaler is not saved (modification of 3/12/2024).
+      (prepare_data_for_Delta_u_emulators.m) and the scaler is not saved (modification of 3/12/2024).
     Model and hyperparameter search
     - Residual block: BatchNormalization -> Dense -> swish -> Dropout (only if the rate is > 0); the original has Dense(swish)
       -> BatchNormalization -> Dropout. The output layer is float32.
@@ -51,7 +51,7 @@ USAGE (from the folder that contains <folder>/RNN/mat_files, e.g. ./Emulators)
     python RNN_network_optimisation_JDR.py <folder> <fname>
     <folder> : domain folder, e.g. AMUND
     <fname>  : name of the data files without "data_" / "SVD_" and ".mat" (written by
-               prep_EmulatorTrainingData_deltaU.m, option write_outputs_for_TF), e.g.
+               prepare_data_for_Delta_u_emulators.m, option write_outputs_for_TF), e.g.
                AMUND_Calv_dh_2000-2009_Weertman-Umbi_cycle2-2_floatingice0_includemeasurements0_Basis_Wc2-Uc2-Comp25-Var50
 
 INPUTS
@@ -163,7 +163,7 @@ class sr_RESNET(kt.HyperModel):
         return model
 
 # Huber loss of the fields reconstructed from the first n SVD coefficients with the basis B
-# TODO: prep_EmulatorTrainingData_deltaU.m normalises the targets (z-score per component) before writing T_train, but
+# TODO: prepare_data_for_Delta_u_emulators.m normalises the targets (z-score per component) before writing T_train, but
 # the loss multiplies by B without undoing that scaling: check that this weighting is intended.
 def matrix_loss(B,n):
     huber = tf.keras.losses.Huber()

@@ -1,5 +1,5 @@
-function prep_EmulatorTrainingData_deltaU
-% prep_EmulatorTrainingData_deltaU  Prepare training data for the emulators of the change in speed.
+function prepare_data_for_Delta_u_emulators
+% prepare_data_for_Delta_u_emulators  Prepare training data for the emulators of the change in speed.
 %
 % PURPOSE
 %   Reads maps of the change in surface speed (delta u) between startyear and targetyear from the

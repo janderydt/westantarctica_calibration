@@ -19,6 +19,8 @@ Raw model output (restart and result files) is not part of the repository but ca
 
 ```
 ua_input/                    Úa input and run scripts (steps 1 to 5, in the order of the numbers)
+    0_synth_pig/             SYNTH_PIG only: Úa user input files of the synthetic glacier experiments (geometry, spinup,
+                             cold and warm transient runs, inversion test)
     1_interpolants/          gridded interpolants of geometry, velocities and thickness changes
     2_meshing/               meshes (the meshes themselves are archived on Zenodo, DOI: see "Data availability" below)
     3_runtable/              sample space and run table of the inverse ensemble
@@ -28,7 +30,8 @@ ua_input/                    Úa input and run scripts (steps 1 to 5, in the ord
         4_inverse/           Úa user input files of the inverse stage
         5_diagnostic/        diagnostic stage (for transparency, not runnable)
 analysis/                    analysis of the results (steps 6 to 9)
-    postprocessing/          collection of the diagnostic results and basin fluxes (for transparency, not runnable)
+    postprocessing/          collection of the inversion and diagnostic results (for transparency, not runnable), the Delta_u files,
+                             basin fluxes and plots of the ensembles
     emulation/               SVD, training data and training of the neural network emulators (MATLAB and Python)
     bayesian_inference/      Bayesian inference, posterior distribution and sampling of the posterior
 figures/                     scripts for the figures of the paper (see figures/README_figures.md)
@@ -47,7 +50,7 @@ WORKFLOW.md                  description of the workflow, step by step
 | 6 | postprocessing of the results | `analysis/postprocessing` |
 | 7 | emulation: singular value decomposition and neural network | `analysis/emulation` |
 | 8 | Bayesian inference (MCMC) and fit of the posterior | `analysis/bayesian_inference` |
-| 9 | sample of the posterior, new Úa runs | `analysis/bayesian_inference/calc_HPDsample.m` |
+| 9 | sample of the posterior, new Úa runs | `analysis/bayesian_inference/Calc_HPDsample.m` |
 | 10 | figures | `figures` |
 
 Scripts that need raw model output are marked "**FOR TRANSPARENCY, NOT RUNNABLE**" in their header; the data they need
@@ -62,8 +65,8 @@ can be obtained upon request from the author [TODO: contact]. See
 3. Run the scripts in `figures` as described in `figures/README_figures.md`. Figures 2 and 5 need raw model output and
    cannot be reproduced from the data in the repository (the raw model output can be obtained upon request from the author).
 
-To repeat the emulation and the inference: `analysis/emulation` (`prep_EmulatorTrainingData_deltaU.m`, then
-`RNN_network_optimisation_JDR.py`), then `analysis/bayesian_inference` (`main_BayesianInference_u.m`).
+To repeat the emulation and the inference: `analysis/emulation` (`prepare_data_for_Delta_u_emulators.m`, then
+`RNN_network_optimisation_JDR.py`), then `analysis/bayesian_inference` (`Driver_BayesianInference.m`).
 
 ## Data availability
 
@@ -79,7 +82,9 @@ To repeat the emulation and the inference: `analysis/emulation` (`prep_EmulatorT
 The scripts do not change the MATLAB path (the only exception is the placeholder `addpath("/path/to/ua/source/folder")` in
 `ua_input/run/UaWrapper.m`, which you have to adapt). Before running them, add to the path: this repository with its subfolders
 (`addpath(genpath('<path to this repository>'))`), Úa, UQLab, the third-party and helper functions listed below and, for
-step 1, the reader functions.
+step 1, the reader functions. The Úa user input files (`Define*.m`) in `ua_input/0_synth_pig`, `ua_input/run/4_inverse` and
+`ua_input/run/5_diagnostic` have the same names in the different stages: Úa uses the copy in the experiment folder, so do not
+put these three folders on the MATLAB path.
 
 * [Úa](https://github.com/GHilmarG/UaSource) (no specific version is tracked) for the model runs and plotting functions.
 * MATLAB with the Mapping, Image Processing, Statistics and Machine Learning, Optimization and Parallel Computing toolboxes; for
@@ -98,8 +103,8 @@ step 1, the reader functions.
   (search for `/path/to`): `/path/to/ua/source/folder` (Úa source code, `ua_input/run/UaWrapper.m`), `/path/to/data`
   (public input datasets, the scripts in `ua_input/1_interpolants` and `figures/Figure5_Plot_AMUND_VelThick.m`),
   `/path/to/interpolants/` and `/path/to/DiagnosticData/` (`analysis/bayesian_inference/loadvelocitydata.m`),
-  `/path/to/analysis/folder` (`analysis/bayesian_inference/main_BayesianInference_u.m`), `/path/to/home/`
-  (`analysis/postprocessing/main_PerturbationResultsEnsemble.m`), `/path/to/run_tables/`
+  `/path/to/analysis/folder` (`analysis/bayesian_inference/Driver_BayesianInference.m`), `/path/to/home/`
+  (`analysis/postprocessing/Calc_PerturbationResults_Ensemble.m`), `/path/to/run_tables/`
   (`ua_input/3_runtable/GenerateRunTable_Inverse.m`), and in the figure scripts `/path/to/BayesianAnalysis/<domain>/`,
   `/path/to/SYNTH_PIG/ResultsFiles/`, `/path/to/diagnostic_cases/` and `/path/to/inverse_cases/`.
 * Some scripts adapt code from other authors: `analysis/emulation/RNN_network_optimisation_JDR.py` is adapted from

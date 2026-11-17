@@ -19,7 +19,7 @@ function GenerateSampleSpace_Inverse
 %      (gsC, gsA, gaC, gaA), sampling is done directly in log10 space
 %      (uniform sampling design; the truncated Gaussians informed by an L-curve
 %      analysis, noted at each parameter, are the priors used in the Bayesian
-%      inference, see calc_BayesianInference_u) and the result
+%      inference, see Calc_BayesianInference) and the result
 %      is transformed back to physical units afterwards.
 %   4. Optionally enriches an existing LHS design with extra points
 %      (only supported for SamplingMethod = 'LHS').
@@ -100,7 +100,7 @@ switch GradientCalc
         % Regularization parameters (gsC, gsA, gaC, gaA) are specified
         % directly in log10 space with a Uniform sampling design over plausible
         % ranges; .Bounds repeats the range. The priors used in the Bayesian
-        % inference (calc_BayesianInference_u) are truncated Gaussians in log10
+        % inference (Calc_BayesianInference) are truncated Gaussians in log10
         % space with the mean informed by an L-curve analysis and the std chosen
         % such that mean +/- 1 (in log10 space) captures ~95% of the probability
         % mass; the values are noted at each parameter below.

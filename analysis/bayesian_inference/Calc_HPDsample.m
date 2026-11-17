@@ -1,5 +1,5 @@
-function HPD = calc_HPDsample(myPosteriorDist,N)
-% calc_HPDsample  Sample from the high-density region of a posterior distribution (the highest-density samples
+function HPD = Calc_HPDsample(myPosteriorDist,N)
+% Calc_HPDsample  Sample from the high-density region of a posterior distribution (the highest-density samples
 % that hold 95% of the density-weighted mass).
 %
 % PURPOSE
@@ -11,7 +11,7 @@ function HPD = calc_HPDsample(myPosteriorDist,N)
 %   random from this region (frac = fraction of the N samples assigned to this class).
 %   NOTE: the samples are drawn from the distribution itself, so weighting them by their density value gives a
 %   smaller region than the 95% highest posterior density (HPD) region, which would be the first
-%   ceil(0.95*1e5) samples of the sorted list. The names calc_HPDsample, HPD and HPDSample are kept for the
+%   ceil(0.95*1e5) samples of the sorted list. The names Calc_HPDsample, HPD and HPDSample are kept for the
 %   function, its output and the data files.
 %
 % INPUTS
@@ -23,7 +23,7 @@ function HPD = calc_HPDsample(myPosteriorDist,N)
 %
 % OUTPUT
 %   HPD(k).sample   : round(N*frac) rows; first column is the value of the (continuous) sliding law variable of the
-%                     inference, 1.25 + (k-1)*0.5: calc_BayesianInference_u rounds this variable to the sliding law index
+%                     inference, 1.25 + (k-1)*0.5: Calc_BayesianInference rounds this variable to the sliding law index
 %                     (1 = Weertman, 2 = Umbi), so class k=1 gives 1.25 (Weertman) and k=2 gives 1.75 (Umbi);
 %                     then one column per marginal. Empty if frac=0.
 %

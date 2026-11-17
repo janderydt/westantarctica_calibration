@@ -35,7 +35,7 @@ Fh2000 = scatteredInterpolant(out.MUA.coordinates(:,1),out.MUA.coordinates(:,2),
 s2000 = out.F.s;
 
 % velocity 2000
-out = LoadVel("AMUND","u","2000",1);
+out = loadvelocitydata("AMUND","u","2000",1);
 u2000 = out.("yr2000").u;
 std2000 = out.("yr2000").stdu;
 u2000(isnan(std2000))=nan;
@@ -88,7 +88,7 @@ GF2020_withIS = out.F.GF;
 
 %% GATHER VELOCITY DATA FOR THIRD STEP
 % \delta u 2009
-out = LoadVel("AMUND","du","2000-2009",1);
+out = loadvelocitydata("AMUND","du","2000-2009",1);
 du2000_2009 = out.("yr2000_yr2009").du;
 stddu2000_2009 = out.("yr2000_yr2009").stddu;
 MUA2009 = out.yr2009.MUA;
@@ -96,7 +96,7 @@ GF2009 = out.yr2009.GF;
 du2000_2009(GF2009.node==0 | stddu2000_2009==1e3)=nan;
 
 % \delta u 2014
-out = LoadVel("AMUND","du","2000-2014",1);
+out = loadvelocitydata("AMUND","du","2000-2014",1);
 du2000_2014 = out.("yr2000_yr2014").du;
 stddu2000_2014 = out.("yr2000_yr2014").stddu;
 MUA2014 = out.yr2014.MUA;
@@ -104,7 +104,7 @@ GF2014 = out.yr2014.GF;
 du2000_2014(GF2014.node==0 | stddu2000_2014==1e3)=nan;
 
 % \delta u 2020
-out = LoadVel("AMUND","du","2000-2020",1);
+out = loadvelocitydata("AMUND","du","2000-2020",1);
 du2000_2020 = out.("yr2000_yr2020").du;
 stddu2000_2020 = out.("yr2000_yr2020").stddu;
 MUA2020 = out.yr2020.MUA;
@@ -427,13 +427,4 @@ set(H,"PaperPositionMode","Auto","PaperUnits","Inches","PaperSize",[pos(3),pos(4
 Hname = "./Figure5";
 print(H,Hname,"-dpng","-r400");
 
-end
-
-function out = LoadVel(domain,dataformat,years,only_grounded_ice)
-% interface of loadvelocitydata (struct input)
-UserVar.domain = domain;
-UserVar.dataformat = dataformat;
-UserVar.years = years;
-UserVar.only_grounded_ice = only_grounded_ice;
-out = loadvelocitydata(UserVar);
 end

@@ -1,5 +1,5 @@
-function main_PerturbationResultsEnsemble
-% main_PerturbationResultsEnsemble  Collect the results of the diagnostic (perturbation) experiments of an ensemble.
+function Calc_PerturbationResults_Ensemble
+% Calc_PerturbationResults_Ensemble  Collect the results of the diagnostic (perturbation) experiments of an ensemble.
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % Needs the results of the diagnostic experiments (ResultsFiles of each experiment) and the inversion data
@@ -20,15 +20,15 @@ function main_PerturbationResultsEnsemble
 %   Diagnostic run table (UserVar.Table), diagnostic results
 %   <UserVar.home>/GLUE_Diagnostic/cases/<Domain>/<Domain>_Diagnostic_<ExpID>/ResultsFiles/*.mat,
 %   inversion data (inversiondata_filename; structure data with InverseExpID, gaC, gaA, gsC, gsA, dhdt_err,
-%   misfit, startgeometry for each inversion; created by a script not yet received), basins_IMBIE_v2.mat (IMBIE v2 basin outlines; data that
+%   misfit, startgeometry for each inversion; created by Calc_InverseResults_Ensemble), basins_IMBIE_v2.mat (IMBIE v2 basin outlines; data that
 %   can be obtained upon request from the author)
 %
 % OUTPUT
 %   perturbationdata_filename (data, perturbation_experiments_analyzed)
 %
-% REQUIRES (not part of this repository yet)
-%   Calc_UaGLFlux_PerBasin, Calc_UaOBFlux_PerBasin, RemoveIceRisesAndIslands; ReadWritetable
-%   (ua_input/3_runtable)
+% REQUIRES
+%   Calc_UaGLFlux_PerBasin, Calc_UaOBFlux_PerBasin, RemoveIceRisesAndIslands (same folder); ReadWritetable
+%   (ua_input/run)
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -55,7 +55,7 @@ if contains(UserVar.Table,"AMUND")
         'G-H',...  % PIG, Thwaites
         'H-Hp'}; % Abbot
     
-    % load basins (IMBIE v2) and keep only the basins of interest; RemoveIceRisesAndIslands is not part of this repository yet
+    % load basins (IMBIE v2) and keep only the basins of interest (RemoveIceRisesAndIslands removes the small ice rises and islands)
     filename = 'basins_IMBIE_v2.mat'; 
     B = load(filename);
     B = RemoveIceRisesAndIslands(B);

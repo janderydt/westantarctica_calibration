@@ -1,18 +1,18 @@
-function calc_BayesianInference_u(UserVar)
-% calc_BayesianInference_u  Bayesian inference of the model parameters from observed changes in speed.
+function Calc_BayesianInference(UserVar)
+% Calc_BayesianInference  Bayesian inference of the model parameters from observed changes in speed.
 %
 % PURPOSE
 %   Infers the posterior distribution of the ensemble parameters ([sliding law] log10(gaA), log10(gaC),
 %   log10(gsA), log10(gsC), m, n, [log10(dhdt_err), cycle]) with MCMC (affine-invariant ensemble sampler, UQLab).
 %   The forward model is an emulator (residual neural network, RNN) of the change in surface speed
-%   (see prep_EmulatorTrainingData_deltaU.m and RNN_network_optimisation_JDR.py), one emulator per
+%   (see prepare_data_for_Delta_u_emulators.m and RNN_network_optimisation_JDR.py), one emulator per
 %   row of UserVar.slidinglaw (e.g. one per start-target year pair). The data are the observed changes
 %   in speed projected onto the truncated SVD basis. The log-likelihood (customLogLikelihood) is Gaussian with
 %   a covariance that is the sum of the measurement errors, the Ua (model) errors and the emulator errors,
 %   all projected onto the SVD basis; the log-likelihoods of all emulators are added.
 %
 % INPUT
-%   UserVar (struct; see main_BayesianInference_u for all fields): MCMC.a/Steps/NChains, l, std_ua, domain,
+%   UserVar (struct; see Driver_BayesianInference for all fields): MCMC.a/Steps/NChains, l, std_ua, domain,
 %   perturbation, slidinglaw, cycle, dataformat, only_grounded_ice, years, SVDcomponents, modelversion,
 %   do_plots. Without arguments default values are used.
 %
@@ -20,7 +20,7 @@ function calc_BayesianInference_u(UserVar)
 %   ./Emulators/<domain>/RNN/TF_files/<modelversion>_<domain>_<perturbation>_<years>_<slidinglaw>_cycle<c>_floatingice<f>_includemeasurements0_*Comp<N>*
 %       (trained emulator: TensorFlow SavedModel imported with importNetworkFromTensorFlow, or a .keras file)
 %   ./Emulators/<domain>/RNN/mat_files/data_*.mat (X_train_C/S, T_train_C/S), SVD_*.mat (T_reproj, T_mean),
-%       MSE_RNN_<modelversion>_*.mat (mse_RNN: emulator mean squared errors, from plot_Emulator_MSE, not yet received)
+%       MSE_RNN_<modelversion>_*.mat (mse_RNN: emulator mean squared errors, from plot_Emulator_MSE, analysis/emulation)
 %   ./DiagnosticData/<domain>/<domain>_Delta_u_<years>[_<slidinglaw>].mat (MUA_yr2, GF_yr2)
 %   observed velocities: loadvelocitydata (same folder)
 %
@@ -30,7 +30,7 @@ function calc_BayesianInference_u(UserVar)
 %
 % REQUIRES
 %   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua),
-%   loadvelocitydata, Calc_MarginalsInference (same folder), plot_BayesianAnalysisResults_u (folder figures); MATLAB: Deep Learning Toolbox with
+%   loadvelocitydata, Calc_MarginalsInference (same folder), plot_myBayesianAnalysis (folder figures); MATLAB: Deep Learning Toolbox with
 %   the Deep Learning Toolbox Converter for TensorFlow Models (importNetworkFromTensorFlow), Statistics
 %   and Machine Learning Toolbox (pdist2), tensorprod (R2022a or later); for .keras models the Python
 %   interface with Keras
@@ -65,12 +65,12 @@ uqlab; % initialize uqlab
 % analysis (plot_Lcurve.m, not part of this repository yet). Other parameters are given a uniform
 % distribution over their support. The bounds might be set automatically,
 % but just to be sure we add them here. They can be optained from 
-% plot_InverseParameterDistribution.m (not part of this repository yet).
+% plot_Inverse_ParameterDistribution.m (same folder).
 % NOTE: the ensemble of inversions (GenerateSampleSpace_Inverse) was sampled uniformly in log10
 % over [3 6] for gsA, gsC and [-1 log10(100)] for gaA, gaC, wider than these priors.
 % !!! Make sure that the order of priors is consistent with how the
 % customLogLikelihood function expects the parameters as input. Check
-% that these are also the parameters in the emulator training data (prep_EmulatorTrainingData_deltaU.m,
+% that these are also the parameters in the emulator training data (prepare_data_for_Delta_u_emulators.m,
 % Calc_SVD_basis.m) for which the emulators have been trained. By default, we use
 % X = [Slidinglaw log10(gaA) log10(gaC) log10(gsA) log10(gsC) m n log10(dhdt_err)];
 PriorOpts.Name = 'Model parameters prior';
@@ -145,7 +145,7 @@ end
 myPriorDist = uq_createInput(PriorOpts);
 
 %% define data
-myData.y = loadvelocitydata(UserVar); % myData.y.(year).u and myData.y.(year).stdu 
+myData.y = loadvelocitydata(UserVar.domain,UserVar.dataformat,UserVar.years,UserVar.only_grounded_ice); % myData.y.(year).u and myData.y.(year).stdu 
     % are N-by-1 matrices with N the number of nodes in the Ua mesh for that year
 myData.Name = 'velocity observations and errors';
 
@@ -244,7 +244,7 @@ Calc_MarginalsInference(UserVar.location,UserVar.fname);
 uq_print(myBayesianAnalysis);
 
 if UserVar.do_plots
-    plot_BayesianAnalysisResults_u(myBayesianAnalysis,UserVar);
+    plot_myBayesianAnalysis(myBayesianAnalysis,UserVar);
 end
 
 end
@@ -252,7 +252,7 @@ end
 function logL = customLogLikelihood(params, measurements, UserVar)
 
 % NOTE: the emulators and covariance matrices are stored in persistent variables, which are only set at the first
-% call in a MATLAB session: use "clear calc_BayesianInference_u" before running with different settings.
+% call in a MATLAB session: use "clear Calc_BayesianInference" before running with different settings.
 persistent M Nem np
 
 % evaluates the log likelihood for parameter values specified in params
@@ -362,16 +362,16 @@ if isempty(M)
         % Subtract mean and deal with nans in data
         data_tmp = measurements(1).(yearstr2).(ustr)(:)-T_mean(:);
         std_tmp = measurements(1).(yearstr2).(stdstr)(:);
-        Indnan = (isnan(data_tmp) | isnan(std_tmp));
+        Indnan = find(isnan(data_tmp) | isnan(std_tmp));
         if dataformat(ii) == "LOGu"
             data_tmp(Indnan) = 0; 
             std_tmp(Indnan) = 3;
         elseif dataformat(ii) == "u"
             data_tmp(Indnan) = 0; 
-            std_tmp(Indnan) = max(std_tmp(~Indnan));
+            std_tmp(Indnan) = 1e3;
         elseif dataformat(ii) == "du"
             data_tmp(Indnan) = 0; 
-            std_tmp(Indnan) = max(std_tmp(~Indnan));
+            std_tmp(Indnan) = 1e3;
         end
 
         % Project data onto truncated space. Make sure that this does not
@@ -385,29 +385,26 @@ if isempty(M)
         M(ii).data = data_tmp'*T_reproj';
 
         % Assemble covariance matrices
-        try
-            load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+"_"+slidinglaw(ii,1)+".mat","MUA_yr2","GF_yr2");
-        catch
-            load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+".mat","MUA_yr2","GF_yr2");
-        end
-        MUA = MUA_yr2;
-        GF= GF_yr2;
-            
         % 1. measurement errors
         S_meas = T_reproj*diag(std_tmp.^2)*T_reproj';
 
         % 2. Ua (model) errors: spatially correlated Gaussian errors with standard deviation std_ua (m/yr) and
         % range l (m)
-        if std_ua~=0
-            
-            su_nodal = std_ua*ones(MUA.Nnodes,1);
-            if l>0
-                TP = tensorprod(su_nodal,su_nodal,2);
-                D_tmp = pdist2(MUA.coordinates,MUA.coordinates,"squaredeuclidean");
-                D_tmp = TP.*exp(-D_tmp/(2*l^2));
-            else
-                D_tmp = diag(su_nodal.^2);
+        if std_ua~=0 || l~=0
+            try
+                load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+"_"+slidinglaw(ii,1)+".mat","MUA_yr2","GF_yr2");
+            catch
+                load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+".mat","MUA_yr2","GF_yr2");
             end
+            MUA = MUA_yr2;
+            GF= GF_yr2;
+            D_tmp = pdist2(MUA.coordinates,MUA.coordinates,"squaredeuclidean");
+            su_nodal = std_ua*ones(MUA.Nnodes,1);
+            if only_grounded_ice(ii)==0
+                su_nodal(GF.node<0.5)=2*su; % give floating nodes a larger error (not used in the paper, only_grounded_ice = 1; su is not defined)
+            end
+            TP = tensorprod(su_nodal,su_nodal,2);
+            D_tmp = TP.*exp(-D_tmp/(2*l^2));
     
             S_ua = T_reproj*D_tmp*T_reproj';
             clear D_tmp
