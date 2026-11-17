@@ -5,7 +5,7 @@ function calc_BayesianInference_u(UserVar)
 %   Infers the posterior distribution of the ensemble parameters ([sliding law] log10(gaA), log10(gaC),
 %   log10(gsA), log10(gsC), m, n, [log10(dhdt_err), cycle]) with MCMC (affine-invariant ensemble sampler, UQLab).
 %   The forward model is an emulator (residual neural network, RNN) of the change in surface speed
-%   (see prep_EmulatorTrainingData_deltaU.m and RNN_network_optimisation_JDR_v5.py), one emulator per
+%   (see prep_EmulatorTrainingData_deltaU.m and RNN_network_optimisation_JDR.py), one emulator per
 %   row of UserVar.slidinglaw (e.g. one per start-target year pair). The data are the observed changes
 %   in speed projected onto the truncated SVD basis. The log-likelihood (customLogLikelihood) is Gaussian with
 %   a covariance that is the sum of the measurement errors, the Ua (model) errors and the emulator errors,
@@ -16,7 +16,7 @@ function calc_BayesianInference_u(UserVar)
 %   perturbation, slidinglaw, cycle, dataformat, only_grounded_ice, years, SVDcomponents, modelversion,
 %   do_plots. Without arguments default values are used.
 %
-% FILES READ (relative to the current folder; not part of the code, see README)
+% FILES READ (data, relative to the current folder; can be obtained upon request from the author, see README)
 %   ./Emulators/<domain>/RNN/TF_files/<modelversion>_<domain>_<perturbation>_<years>_<slidinglaw>_cycle<c>_floatingice<f>_includemeasurements0_*Comp<N>*
 %       (trained emulator: TensorFlow SavedModel imported with importNetworkFromTensorFlow, or a .keras file)
 %   ./Emulators/<domain>/RNN/mat_files/data_*.mat (X_train_C/S, T_train_C/S), SVD_*.mat (T_reproj, T_mean),
@@ -29,7 +29,7 @@ function calc_BayesianInference_u(UserVar)
 %   written by Calc_MarginalsInference (same folder). The random number generator is seeded (rng(1)).
 %
 % REQUIRES
-%   UQLab Rel. 2.0.0 (path via the environment variable "froot_matlabfunctions"), Klear (UaSource),
+%   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua),
 %   loadvelocitydata, Calc_MarginalsInference (same folder), plot_BayesianAnalysisResults_u (folder figures); MATLAB: Deep Learning Toolbox with
 %   the Deep Learning Toolbox Converter for TensorFlow Models (importNetworkFromTensorFlow), Statistics
 %   and Machine Learning Toolbox (pdist2), tensorprod (R2022a or later); for .keras models the Python
@@ -55,7 +55,6 @@ if nargin==0
 end
 
 %% initialize UQLAB
-addpath(genpath(getenv("froot_matlabfunctions")+"/../UQLab_Rel2.0.0"));
 
 rng(1,'twister'); % set the random number generator for reproducible results
 clear uqlab;
@@ -67,7 +66,7 @@ uqlab; % initialize uqlab
 % distribution over their support. The bounds might be set automatically,
 % but just to be sure we add them here. They can be optained from 
 % plot_InverseParameterDistribution.m (not part of this repository yet).
-% NOTE: the ensemble of inversions (GLUE_GenerateSampleSpace_Inverse) was sampled uniformly in log10
+% NOTE: the ensemble of inversions (GenerateSampleSpace_Inverse) was sampled uniformly in log10
 % over [3 6] for gsA, gsC and [-1 log10(100)] for gaA, gaC, wider than these priors.
 % !!! Make sure that the order of priors is consistent with how the
 % customLogLikelihood function expects the parameters as input. Check
@@ -399,7 +398,6 @@ if isempty(M)
 
         % 2. Ua (model) errors: spatially correlated Gaussian errors with standard deviation std_ua (m/yr) and
         % range l (m)
-        % TODO: document where the values of std_ua and l come from
         if std_ua~=0
             
             su_nodal = std_ua*ones(MUA.Nnodes,1);

@@ -3,7 +3,7 @@ function main_PerturbationResultsEnsemble
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % Needs the results of the diagnostic experiments (ResultsFiles of each experiment) and the inversion data
-% of the ensemble members, which are not distributed with this repository.
+% of the ensemble members; these data can be obtained upon request from the author.
 %
 % PURPOSE
 %   For all finished experiments of the diagnostic run table(s) (within UserVar.idrange) that have not been
@@ -13,31 +13,30 @@ function main_PerturbationResultsEnsemble
 %   together with the nodal speed and the inversion parameters, in the structure data, with one element per
 %   inversion (ensemble member) and fields Original / Calv / dhIS / dh / Calv_dh, each with a field yr<year> (qGL.<basin>,
 %   qOB.<basin>, cycle, ExpID, speed). The type of perturbation is taken from the Comments column of the
-%   run table (see GLUE_GenerateRunTable_Diagnostic).
+%   run table (see GenerateRunTable_Diagnostic).
 %   The file is updated incrementally: experiments in perturbation_experiments_analyzed are skipped.
 %
 % INPUTS
 %   Diagnostic run table (UserVar.Table), diagnostic results
 %   <UserVar.home>/GLUE_Diagnostic/cases/<Domain>/<Domain>_Diagnostic_<ExpID>/ResultsFiles/*.mat,
 %   inversion data (inversiondata_filename; structure data with InverseExpID, gaC, gaA, gsC, gsA, dhdt_err,
-%   misfit, startgeometry for each inversion; created by a script not yet received), basins_IMBIE_v2.mat
+%   misfit, startgeometry for each inversion; created by a script not yet received), basins_IMBIE_v2.mat (IMBIE v2 basin outlines; data that
+%   can be obtained upon request from the author)
 %
 % OUTPUT
 %   perturbationdata_filename (data, perturbation_experiments_analyzed)
 %
 % REQUIRES (not part of this repository yet)
-%   Calc_UaGLFlux_PerBasin, Calc_UaOBFlux_PerBasin, RemoveIceRisesAndIslands; GLUE_ReadWritetable
-%   (ua_input/runtable)
+%   Calc_UaGLFlux_PerBasin, Calc_UaOBFlux_PerBasin, RemoveIceRisesAndIslands; ReadWritetable
+%   (ua_input/3_runtable)
 
-addpath(getenv("froot_ua")+"cases/GLUE");
-addpath(getenv("froot_tools"));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% MAKE CHANGES IN THIS BLOCK AS REQUIRED
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TODO: machine-specific folders; replace by a central config
-UserVar.home = "/mnt/md0/Ua/cases/GLUE/";
+% home folder of the Ua experiments (contains GLUE_Diagnostic)
+UserVar.home = "/path/to/home/";
 UserVar.type = "Diagnostic";
 
 % settings for SYNTH_PIG (earlier runs): UserVar.Table = UserVar.home+"GLUE_Diagnostic/RunTable_Diagnostic_SYNTH_PIG_nsmbl__OLD-Weertmanyr30__NEW-Weertmanyr75.csv",
@@ -96,7 +95,7 @@ end
 for tt=1:numel(UserVar.Table)
 
     % read run table
-    RunTable = GLUE_ReadWritetable(UserVar,UserVar.Table(tt),[],'read');
+    RunTable = ReadWritetable(UserVar,UserVar.Table(tt),[],'read');
     
     % ExpIDs
     ExpID = RunTable{:,"ExpID"};

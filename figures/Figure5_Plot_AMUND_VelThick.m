@@ -2,7 +2,7 @@ function Figure5_Plot_AMUND_VelThick
 % Figure5_Plot_AMUND_VelThick  Figure 5: AMUND data and the changes used in the calibration.
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
-% Needs the results of diagnostic and inverse experiments of the ensemble (not distributed).
+% Needs the results of diagnostic and inverse experiments of the ensemble (these data can be obtained upon request from the author).
 %
 % PURPOSE
 %   (a-c) ice speed, ice thickness and dh/dt in 2000; (d-f) change in ice thickness between 2000 and 2009, 2014, 2020
@@ -12,24 +12,23 @@ function Figure5_Plot_AMUND_VelThick
 %   The Ua results are the diagnostic experiments with the experiment numbers runID_* and the inversion with number
 %   runID_dhdt2000 (cycle 2: dhdt measurements).
 %
-% DATA (not distributed)
-%   Diagnostic results <froot_ua>/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/..., inversion results
-%   <froot_ua>/cases/GLUE/GLUE_Inverse/cases/AMUND_nsmbl/..., observed velocities (loadvelocitydata), grounding lines in
-%   <froot_data>/GroundingLine and /AmundsenSea (MEaSUREs InSAR v2, Milillo et al. Thwaites 2016-2017, Pope/Smith/Kohler Dotson
+% DATA (the model results can be obtained upon request from the author)
+%   Diagnostic results /path/to/diagnostic_cases/AMUND_nsmbl/..., inversion results
+%   /path/to/inverse_cases/AMUND_nsmbl/..., observed velocities (loadvelocitydata), grounding lines in
+%   /path/to/data/GroundingLine and /AmundsenSea (MEaSUREs InSAR v2, Milillo et al. Thwaites 2016-2017, Pope/Smith/Kohler Dotson
 %   and Crosson, Ross et al. COSMO-SkyMed 2020-2022, ESA CCI GL v2)
 %
 % REQUIRES
-%   Ua source code, loadvelocitydata (analysis/bayesian_inference); cmocean, fig, ll2psxy (third party / froot_tools),
+%   Ua source code, loadvelocitydata (analysis/bayesian_inference); cmocean, fig, ll2psxy (third party),
 %   PlotNodalBasedQuantities_JDR; MATLAB Mapping Toolbox (shaperead)
 
-addpath(genpath(getenv("froot_tools")));
-froot_data = getenv("froot_data");
+froot_data = "/path/to/data";
 
 %% GATHER DATA FOR 2000
 % ice thickness and surface 2000
-% TODO: experiment numbers of the diagnostic and inverse experiments used (machine-specific folders, not distributed)
+% experiment numbers of the diagnostic and inverse experiments used
 runID_2000 = 23816;
-files = dir(getenv("froot_ua")+"/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2000)+"/ResultsFiles/*.mat");
+files = dir("/path/to/diagnostic_cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2000)+"/ResultsFiles/*.mat");
 out = load(files.folder+"/"+files.name);
 h2000 = out.F.h;
 Fh2000 = scatteredInterpolant(out.MUA.coordinates(:,1),out.MUA.coordinates(:,2),h2000);
@@ -45,7 +44,7 @@ GF2000 = out.yr2000.GF;
 
 % dh/dt 2000
 runID_dhdt2000 = 20032;
-files = dir(getenv("froot_ua")+"/cases/GLUE/GLUE_Inverse/cases/AMUND_nsmbl/AMUND_nsmbl_Inverse_"+string(runID_dhdt2000)+"/*InverseCycle2.mat");
+files = dir("/path/to/inverse_cases/AMUND_nsmbl/AMUND_nsmbl_Inverse_"+string(runID_dhdt2000)+"/*InverseCycle2.mat");
 out = load(files.folder+"/"+files.name,"Meas","F");
 dhdt2000 = out.Meas.dhdt;
 dhdt2000(out.F.GF.node==0 | dhdt2000==0)=nan;
@@ -53,7 +52,7 @@ dhdt2000(out.F.GF.node==0 | dhdt2000==0)=nan;
 %% GATHER GEOMETRY DATA FOR SECOND STEP
 % \delta h 2009
 runID_2009 = 32967;
-files = dir(getenv("froot_ua")+"/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2009)+"/ResultsFiles/*.mat");
+files = dir("/path/to/diagnostic_cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2009)+"/ResultsFiles/*.mat");
 out = load(files.folder+"/"+files.name);
 h2009 = out.F.h;
 h2000_tmp = Fh2000(out.MUA.coordinates(:,1),out.MUA.coordinates(:,2));
@@ -65,7 +64,7 @@ GF2009_withIS = out.F.GF;
 
 % \delta h 2014
 runID_2014 = 41220;
-files = dir(getenv("froot_ua")+"/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2014)+"/ResultsFiles/*.mat");
+files = dir("/path/to/diagnostic_cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2014)+"/ResultsFiles/*.mat");
 out = load(files.folder+"/"+files.name);
 h2014 = out.F.h;
 h2000_tmp = Fh2000(out.MUA.coordinates(:,1),out.MUA.coordinates(:,2));
@@ -77,7 +76,7 @@ GF2014_withIS = out.F.GF;
 
 % \delta h 2020
 runID_2020 = 25107;
-files = dir(getenv("froot_ua")+"/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2020)+"/ResultsFiles/*.mat");
+files = dir("/path/to/diagnostic_cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+string(runID_2020)+"/ResultsFiles/*.mat");
 out = load(files.folder+"/"+files.name);
 h2020 = out.F.h;
 h2000_tmp = Fh2000(out.MUA.coordinates(:,1),out.MUA.coordinates(:,2));
@@ -166,7 +165,7 @@ end
 runID = ["23816","32967","41220","25107"]; 
 years = [2000,2009,2014,2020];
 for ii = 1:numel(runID)
-    files(ii) = dir("/mnt/md0/Ua/cases/GLUE/GLUE_Diagnostic/cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+runID(ii)+"/ResultsFiles/*.mat");
+    files(ii) = dir("/path/to/diagnostic_cases/AMUND_nsmbl/AMUND_nsmbl_Diagnostic_"+runID(ii)+"/ResultsFiles/*.mat");
     load(files(ii).folder+"/"+files(ii).name,"F","MUA","CtrlVar");
     CtrlVar.PlotGLs=0;
     [S_ua(ii).x,S_ua(ii).y]=PlotGroundingLines(CtrlVar,MUA,F.GF);

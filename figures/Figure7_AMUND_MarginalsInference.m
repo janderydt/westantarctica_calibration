@@ -13,18 +13,17 @@ function Figure7_AMUND_MarginalsInference
 %   Bayesian analysis files (with myPosteriorDist from Calc_MarginalsInference) in the folder froot
 %
 % REQUIRES
-%   UQLab Rel. 2.0.0 (uqlab, uq_all_pdf), Klear (UaSource); cmocean, fig (third party)
+%   UQLab Rel. 2.0.0 (uqlab, uq_all_pdf), Klear (Ua); cmocean, fig (third party)
 
 Klear;
 
-% TODO: machine-specific folder with the Bayesian analysis files (see getfilename at the end of this file)
-froot = "/mnt/md0/Ua/cases/GLUE/GLUE_DataProcessing/BayesianAnalysis/AMUND/";
+% folder with the Bayesian analysis files (see getfilename at the end of this file)
+froot = "/path/to/BayesianAnalysis/AMUND/";
 
 %% =========================================
 %% INITIALIZE UQLAB
 %% =========================================
 
-addpath(genpath(getenv("froot_matlabfunctions")+"/../UQLab_Rel2.0.0"));
 
 rng(1,'twister'); % set the random number generator for reproducible results
 uqlab; % initialize uqlab

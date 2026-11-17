@@ -8,10 +8,10 @@ function plot_BayesianAnalysisResults_u(myBayesianAnalysis,UserVar)
 %   (2) the "corner plot" (figure 'Distributions', saved as ./Figures/Aposterior_<name>.png): marginal posterior
 %       distributions (histograms of the last 10% of the chains, fitted marginals, prior, maximum a posteriori point
 %       MAP) on the diagonal and scatter plots of pairs of parameters below it. For AMUND the Ua training samples
-%       (ensemble members) and a sample of 10 points of the 95% highest posterior density region (calc_HPDsample; saved
+%       (ensemble members) and a sample of 10 points of the high-density region (95% of the density-weighted mass, calc_HPDsample; saved
 %       in ./BayesianAnalysis/<domain>/ as X_HPD) are added; for SYNTH_PIG the true values (n = 3, m = 4);
 %   (3) AMUND only, after a question dialog: the difference between modelled and observed change in speed for each
-%       epoch, for user-chosen parameters (emulator) or the HPD sample (the mean of the nearest Ua simulations),
+%       epoch, for user-chosen parameters (emulator) or the sample of the high-density region (the mean of the nearest Ua simulations),
 %       saved as ./Figures/Delta_u_Mod_vs_Meas_<name>_v<k>.png (inset of Figure 6).
 %
 % INPUTS
@@ -27,7 +27,6 @@ gpuDevice([]);
 setenv('CUDA_VISIBLE_DEVICES','');
 
 %% initialize UQLAB
-addpath(genpath(getenv("froot_matlabfunctions")+"/../UQLab_Rel2.0.0"));
 
 rng(1,'twister'); % set the random number generator for reproducible results
 uqlab; % initialize uqlab
@@ -217,7 +216,7 @@ for Dist=1:numel(fname)
         end
     end    
 
-    %% load HPD samples
+    %% load the samples of the high-density region
     fname_HPD = strrep(fname,"BayesianAnalysis","HPD");
     if ~exist(fname_HPD,"file")
         X_HPD = calc_HPDsample(myPosteriorDist,10);
@@ -480,7 +479,7 @@ for Dist=1:numel(fname)
         true=plot(ax_fig(Ind),[-1e10 -1e10],[0 1],'-k','linewidth',1.5);
         legend(ax_fig(Ind),[prior,b(1),true,map],["Prior","Posterior","True value","Maximum a posteriori"]);
     else
-        legend(ax_fig(Ind),[prior,b(1),map,xua,xhpd],["Prior","Posterior","Maximum a posteriori","Úa training samples","95% credible region"]);
+        legend(ax_fig(Ind),[prior,b(1),map,xua,xhpd],["Prior","Posterior","Maximum a posteriori","Úa training samples","High-density region (95%)"]);
     end
 
     % correlations
@@ -504,10 +503,10 @@ for Dist=1:numel(fname)
     %% SELECTED SAMPLES
     if contains(UserVar.domain,"AMUND")
 
-        %% Sample choice: 1 = user values, 0 = HPD samples
+        %% Sample choice: user values or the sample of the high-density region
         answer = questdlg('What would you like to plot?', ...
             'User input',...
-	        'User parameter choice','HPD samples','Nothing','Nothing');
+	        'User parameter choice','High-density sample','Nothing','Nothing');
         
         if answer == "User parameter choice"
 
@@ -597,11 +596,11 @@ for Dist=1:numel(fname)
                         ",\;\log_{10}(\gamma_{sA})="+sprintf("%2.1f",double(Sample(4)))+...
                         ",\;\log_{10}(\gamma_{sC})="+sprintf("%2.1f",double(Sample(5)))+"$"];
     
-                elseif answer == "HPD samples"
+                elseif answer == "High-density sample"
     
-                    %% HPD
+                    %% high-density region
                     % compare the changes in flow speed, averaged over the 10 random 
-                    % samples in the 95% credible region, to the observed changes for each
+                    % samples in the high-density region, to the observed changes for each
                     % of the different epochs (2000-2009, 2000-2014, 2000-2020).
                     
                     X_HPD_sim = [log10(tmp.gaA(:)) log10(tmp.gaC(:)) log10(tmp.gsA(:)) log10(tmp.gsC(:)) tmp.m(:) tmp.n(:)];
@@ -610,10 +609,10 @@ for Dist=1:numel(fname)
                     if all(D<0.01)
                         Delta_u_SAMPLE = mean(tmp.Delta_u.Calv_dh.map(Ind_sim,:,2),1); 
                     else
-                        warning("No HPD samples available for "+UserVar.years(yy));
+                        warning("No samples of the high-density region available for "+UserVar.years(yy));
                         Delta_u_SAMPLE = NaN*Delta_u_OBS;
                     end
-                    titlestring = "HPD Sample";              
+                    titlestring = "High-density region sample";              
     
                 end
 

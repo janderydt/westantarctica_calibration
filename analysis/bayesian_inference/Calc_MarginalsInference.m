@@ -18,13 +18,12 @@ function Calc_MarginalsInference(location,fname)
 %   calc_HPDsample
 %
 % REQUIRES
-%   UQLab Rel. 2.0.0 (path via the environment variable "froot_matlabfunctions"), Klear (UaSource)
+%   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua)
 
 if nargin==0    
     Klear;
     
     %% initialize UQLAB
-    addpath(genpath(getenv("froot_matlabfunctions")+"/../UQLab_Rel2.0.0"));
     rng(1,'twister'); % set the random number generator for reproducible results
     uqlab; % initialize uqlab
     %% load sample from existing Bayesian Analysis
@@ -33,7 +32,6 @@ end
 
 fname = string(fname);
 
-addpath("./BayesianAnalysis/");
 
 for ff=1:numel(fname)
 
@@ -44,8 +42,6 @@ for ff=1:numel(fname)
         myPriorDist = myBayesianAnalysis.PriorDist;
         myResults = myBayesianAnalysis.Results;
         isdiscrete = 0;
-        % TODO: discr, iOpts and MarginalIndex_discrete are not cleared between files of the loop (see the
-        % clear statement at the end), which matters when files with and without a discrete variable are mixed
 
         SSInd=[];
         for ii=1:numel(myPriorDist.Marginals)
@@ -138,6 +134,6 @@ for ff=1:numel(fname)
 
         save(location+"/"+fname(ff),"myPosteriorDist","-append");  
 
-    clear myBayesianAnalysis UserVar myPosteriorDist X f
+    clear myBayesianAnalysis UserVar myPosteriorDist X f discr iOpts MarginalIndex_discrete
 
 end

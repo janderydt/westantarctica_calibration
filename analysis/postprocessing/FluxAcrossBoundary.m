@@ -16,7 +16,7 @@ function [xB,yB,qB,qBx,qBy]=FluxAcrossBoundary(X,Y,Fub,Fvb,Fh,Fr)
 %   qB           : flux through each edge in kg/yr (qB = length * h * rho * u.n)
 %   qBx, qBy     : x and y components of the flux (kg/yr)
 %
-% (used by Calc_UaOBFlux_PerBasin; not part of UaSource)
+% (used by Calc_UaOBFlux_PerBasin)
 
 Inan = find(isnan(X(:,1))|isnan(X(:,2))|isnan(Y(:,1))|isnan(Y(:,2))); 
 fprintf("Removing %s nan values.\n",string(numel(Inan)));

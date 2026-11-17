@@ -16,12 +16,12 @@ function out = loadvelocitydata(UserVar)
 % OUTPUT
 %   out.("yr"+yr1+"_yr"+yr2).du / .stddu (N-by-1; "du"), out.("yr"+yr).u / .stdu (other formats), plus MUA, GF
 %
-% FILES READ (not part of the code, see README)
-%   <froot_ua>/cases/GLUE/GLUE_Data/GLUE_Interpolants/ extruded velocity interpolants of each year
+% FILES READ (data; can be obtained upon request from the author, see README)
+%   /path/to/interpolants/ (set in the code): extruded velocity interpolants of each year
 %     (GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for 2000,
 %      GriddedInterpolants_<yr>-<yr+1>_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for AMUND,
 %      ScatteredInterpolants_Velocities_SYNTH_PIG_<year>.mat for SYNTH_PIG)
-%   <froot_ua>/cases/GLUE/GLUE_DataProcessing/DiagnosticData/<domain>/<domain>_Delta_u_<yr1>-<yr2>[_Weertman].mat
+%   /path/to/DiagnosticData/<domain>/<domain>_Delta_u_<yr1>-<yr2>[_Weertman].mat (set in the code)
 %     (MUA_yr2, GF_yr2); for "u" / "LOGu": <domain>_perturbation_grids.mat
 
 domain = UserVar.domain;
@@ -58,8 +58,7 @@ for ii=1:numel(years_unique)
         fname = "ScatteredInterpolants_Velocities_SYNTH_PIG_"+years_unique(ii)+".mat";
     end
 
-    % TODO: machine-specific path (environment variable froot_ua); replace by a central config
-    load(getenv("froot_ua")+"/cases/GLUE/GLUE_Data/GLUE_Interpolants/"+fname);
+    load("/path/to/interpolants/"+fname);
     v_tmp = hypot(Fus.Values,Fvs.Values);
     Fu = Fus; Fu.Values = v_tmp;
     std_tmp = hypot(Fxerr.Values,Fyerr.Values);
@@ -78,11 +77,10 @@ for dd=1:numel(dataformat)
         yr2 = years_tmp(2);
 
         if isempty(MUA)
-            % TODO: machine-specific path (froot_ua), also in the "u" / "LOGu" branch below
             try
-                load(getenv("froot_ua")+"/cases/GLUE/GLUE_DataProcessing/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+"_Weertman.mat","MUA_yr2","GF_yr2");
+                load("/path/to/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+"_Weertman.mat","MUA_yr2","GF_yr2");
             catch
-                load(getenv("froot_ua")+"/cases/GLUE/GLUE_DataProcessing/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+".mat","MUA_yr2","GF_yr2");
+                load("/path/to/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+".mat","MUA_yr2","GF_yr2");
             end
             out.("yr"+yr2).MUA = MUA_yr2;
             out.("yr"+yr2).GF = GF_yr2;
@@ -124,7 +122,7 @@ for dd=1:numel(dataformat)
 
     elseif ismember(dataformat(dd),["u","LOGu"])
     
-        tmp=load(getenv("froot_ua")+"/cases/GLUE/GLUE_DataProcessing/DiagnosticData/"+domain+"/"+domain+"_perturbation_grids.mat");
+        tmp=load("/path/to/DiagnosticData/"+domain+"/"+domain+"_perturbation_grids.mat");
         MUA = tmp.("MUA_"+years(dd)); GF = tmp.("GF_"+years(dd));
 
         % interpolate initial and final speed onto Ua mesh

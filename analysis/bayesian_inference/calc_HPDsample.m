@@ -1,17 +1,24 @@
 function HPD = calc_HPDsample(myPosteriorDist,N)
-% calc_HPDsample  Sample from the 95% highest posterior density (HPD) region of a posterior distribution.
+% calc_HPDsample  Sample from the high-density region of a posterior distribution (the highest-density samples
+% that hold 95% of the density-weighted mass).
 %
 % PURPOSE
 %   For each discrete class of the posterior (e.g. a sliding law) the posterior is given as a UQLab
-%   distribution (marginals and copula). 1e5 Monte Carlo samples are drawn from it, sorted by their
-%   probability density, and round(N*frac) samples are picked at random from the high-density samples
-%   (frac = fraction of the N samples assigned to this class).
+%   distribution (marginals and copula). 1e5 Monte Carlo samples are drawn from it and sorted by their
+%   probability density (highest first). The cumulative sum of the density values of the sorted samples,
+%   divided by the sum of all density values, is calculated; the high-density region is the set of
+%   samples up to the point where this cumulative sum reaches 95%. round(N*frac) samples are picked at
+%   random from this region (frac = fraction of the N samples assigned to this class).
+%   NOTE: the samples are drawn from the distribution itself, so weighting them by their density value gives a
+%   smaller region than the 95% highest posterior density (HPD) region, which would be the first
+%   ceil(0.95*1e5) samples of the sorted list. The names calc_HPDsample, HPD and HPDSample are kept for the
+%   function, its output and the data files.
 %
 % INPUTS
 %   myPosteriorDist : struct array (one element per discrete class) with fields
 %                     .frac : fraction of the N samples for this class (0: none)
 %                     .dist.Marginals(i).Name/Type/Parameters/Bounds and .dist.Copula : the posterior
-%                      (UQLab input definition; result of the Bayesian inference, not part of this repository)
+%                      (UQLab input definition; result of the Bayesian inference; data that can be obtained upon request from the author)
 %   N               : total number of samples
 %
 % OUTPUT
@@ -58,17 +65,16 @@ for ind_discrete = 1:ndist
         [f_sorted, idx] = sort(f_samples, 'descend');
         X_sorted = Xsamples(idx,:);
         
-        % 2. Compute cumulative probability
-        % TODO: the samples are drawn from the distribution itself, so each sample has the same weight; here the
-        % samples are weighted by their pdf value, which gives a smaller region than the 95% HPD region.
-        % The 95% HPD region would be the first ceil(p*Nsamples) samples of the sorted list.
+        % 2. Compute the cumulative density-weighted mass: each sample is weighted by its pdf value (the
+        % samples are drawn from the distribution itself, so this is not the 95% HPD region, see the header)
         cum_prob = cumsum(f_sorted) / sum(f_sorted);  % approximate cumulative probability
         
-        % 3. Find PDF threshold for desired probability p (here e.g. 95%)
+        % 3. Find the index at which the cumulative mass reaches p (95%): the high-density region consists of
+        % the samples 1:hpd_idx
         p = 0.95;
         hpd_idx = find(cum_prob >= p, 1);
 
-        % 4. randomly pick round(frac*N) samples from hpd
+        % 4. randomly pick round(frac*N) samples from the high-density region
         idx_random = randsample(hpd_idx,round(N*frac));
         HPD(ind_discrete).sample = X_sorted(idx_random,:);
 

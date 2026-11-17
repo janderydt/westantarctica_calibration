@@ -20,8 +20,8 @@ function main_BayesianInference_u
 %   Emulators, DiagnosticData (and BayesianAnalysis, created if needed).
 
 % make sure we're in the right folder
-% TODO: machine-specific folder; replace by a central config
-cd(getenv("froot_ua")+"cases/GLUE/GLUE_DataProcessing");
+% folder that contains Emulators, DiagnosticData (and BayesianAnalysis, created if needed)
+cd("/path/to/analysis/folder");
 
 l = [50e3]';
 std_ua = [40]'; %m/yr

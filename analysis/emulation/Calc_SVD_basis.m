@@ -184,10 +184,8 @@ if any(isnan(T_meas))
 end
 
 % optionally add the measurements as the first row of T (the mean of the model ensemble is subtracted)
-% TODO: [T_meas(:)' T] concatenates horizontally; a new first row would be [T_meas(:)'; T]. Not used when
-% add_measurements_to_SVD=0.
 if add_measurements_to_SVD    
-    T = [T_meas(:)' T];
+    T = [T_meas(:)'; T];
     T_meanremoved = T-repmat(T_mean(:)',size(T,1),1);
 end
 
@@ -199,8 +197,6 @@ if only_grounded_ice
     T_mean(Nodes_floating) = 0;
 end
 
-% TODO: S is calculated from T_meanremoved, which was computed before the floating nodes were set to
-% zero, so with only_grounded_ice=1 it still includes the floating nodes (T, T_mean and T_meas do not).
 [~,S,~] = svd(T_meanremoved,'econ');
 
 %% save data

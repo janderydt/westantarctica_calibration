@@ -9,23 +9,24 @@ then subjected to a change in geometry (calving front and ice thickness) in a di
 instantaneous change in ice speed. Neural network emulators of this change in speed are trained and used in a Bayesian
 inference (MCMC), which gives the posterior distribution of the model parameters.
 
-Raw model output (restart and result files) is **not** distributed. The repository contains
+Raw model output (restart and result files) is not part of the repository but can be obtained upon request from the author. The repository contains
 
-* all code of the workflow, so that the method can be inspected and re-run with your own data and an Úa installation, and
-* the processed data (postprocessed model results, emulators, posterior samples; [TODO: DOI]) with which the emulation,
+* all code of the workflow, so that the method can be inspected and re-run with the data (public datasets from their original sources; other data can be obtained upon request from the author) and an Úa installation, and
+* the processed data (postprocessed model results, emulators, posterior samples; DOI: see "Data availability" below) with which the emulation,
   the Bayesian inference and the figures can be reproduced.
 
 ## Contents
 
 ```
-ua_input/                    Úa input and run scripts (steps 1 to 5)
-    interpolants/            gridded interpolants of geometry, velocities and thickness changes
-    meshing/                 meshes (the meshes themselves are archived on Zenodo, DOI: TODO)
-    runtable/                sample space and run table of the inverse ensemble
-    inverse/                 Úa user input files of the inverse stage
-    ua_core_overrides/       modified copies of Úa core functions used by the runs (see its README.txt)
-    run/                     wrapper that runs the experiments of a run table
-    diagnostic/              diagnostic stage (for transparency, not runnable)
+ua_input/                    Úa input and run scripts (steps 1 to 5, in the order of the numbers)
+    1_interpolants/          gridded interpolants of geometry, velocities and thickness changes
+    2_meshing/               meshes (the meshes themselves are archived on Zenodo, DOI: see "Data availability" below)
+    3_runtable/              sample space and run table of the inverse ensemble
+    run/                     general scripts for the inverse and the diagnostic stage: wrapper that runs the
+                             experiments of a run table, job and clean-up scripts, reading and writing of run tables
+        ua_core_overrides/   modified copies of Úa core functions used by the runs (see its README.txt)
+        4_inverse/           Úa user input files of the inverse stage
+        5_diagnostic/        diagnostic stage (for transparency, not runnable)
 analysis/                    analysis of the results (steps 6 to 9)
     postprocessing/          collection of the diagnostic results and basin fluxes (for transparency, not runnable)
     emulation/               SVD, training data and training of the neural network emulators (MATLAB and Python)
@@ -38,46 +39,70 @@ WORKFLOW.md                  description of the workflow, step by step
 
 | # | Step | Folder |
 |---|---|---|
-| 1 | gridded interpolants of the input data | `ua_input/interpolants` |
-| 2 | meshes | `ua_input/meshing` |
-| 3 | sample space and run table of the inverse ensemble (Sobol sample, 300 members) | `ua_input/runtable` |
-| 4 | inverse stage in Úa (inversion, spin-up, inversion with dh/dt) | `ua_input/run`, `ua_input/inverse` |
-| 5 | diagnostic stage: perturbation experiments with new geometry | `ua_input/diagnostic` |
+| 1 | gridded interpolants of the input data | `ua_input/1_interpolants` |
+| 2 | meshes | `ua_input/2_meshing` |
+| 3 | sample space and run table of the inverse ensemble (Sobol sample, 300 members) | `ua_input/3_runtable` |
+| 4 | inverse stage in Úa (inversion, spin-up, inversion with dh/dt) | `ua_input/run`, `ua_input/run/4_inverse` |
+| 5 | diagnostic stage: perturbation experiments with new geometry | `ua_input/run/5_diagnostic` |
 | 6 | postprocessing of the results | `analysis/postprocessing` |
 | 7 | emulation: singular value decomposition and neural network | `analysis/emulation` |
 | 8 | Bayesian inference (MCMC) and fit of the posterior | `analysis/bayesian_inference` |
 | 9 | sample of the posterior, new Úa runs | `analysis/bayesian_inference/calc_HPDsample.m` |
 | 10 | figures | `figures` |
 
-Scripts that need raw model output are marked "**FOR TRANSPARENCY, NOT RUNNABLE**" in their header. See
+Scripts that need raw model output are marked "**FOR TRANSPARENCY, NOT RUNNABLE**" in their header; the data they need
+can be obtained upon request from the author [TODO: contact]. See
 [WORKFLOW.md](WORKFLOW.md) for the inputs, outputs and status of every step.
 
 ## Reproducing the figures
 
-1. Download the processed data [TODO: DOI] and place it in the folders `DiagnosticData`, `InversionData`, `Emulators` and
+1. Download the processed data (DOI: see "Data availability" below) and place it in the folders `DiagnosticData`, `InversionData`, `Emulators` and
    `BayesianAnalysis` of the folder from which the scripts are run (see `WORKFLOW.md`).
 2. Install the requirements below.
 3. Run the scripts in `figures` as described in `figures/README_figures.md`. Figures 2 and 5 need raw model output and
-   cannot be reproduced from the distributed data.
+   cannot be reproduced from the data in the repository (the raw model output can be obtained upon request from the author).
 
 To repeat the emulation and the inference: `analysis/emulation` (`prep_EmulatorTrainingData_deltaU.m`, then
-`RNN_network_optimisation_JDR_v5.py`), then `analysis/bayesian_inference` (`main_BayesianInference_u.m`).
+`RNN_network_optimisation_JDR.py`), then `analysis/bayesian_inference` (`main_BayesianInference_u.m`).
+
+## Data availability
+
+* Processed data (postprocessed model results, inversion data, emulators, Bayesian analysis files): [TODO: DOI].
+* Meshes (AMUND meshes with their boundary and fixed-boundary files, SYNTH_PIG mesh files), archived on Zenodo: [TODO: DOI].
+* Raw model output and other data that is not in the repository (for example `basins_IMBIE_v2.mat`): can be obtained upon
+  request from the author [TODO: contact].
+* Public input datasets (BedMachine, Bedmap2, MEaSUREs, ITS_LIVE, CPOM, ...): to be downloaded from the original sources
+  [TODO: table with dataset, version, citation and link].
 
 ## Requirements
+
+The scripts do not change the MATLAB path (the only exception is the placeholder `addpath("/path/to/ua/source/folder")` in
+`ua_input/run/UaWrapper.m`, which you have to adapt). Before running them, add to the path: this repository with its subfolders
+(`addpath(genpath('<path to this repository>'))`), Úa, UQLab, the third-party and helper functions listed below and, for
+step 1, the reader functions.
 
 * [Úa](https://github.com/GHilmarG/UaSource) (no specific version is tracked) for the model runs and plotting functions.
 * MATLAB with the Mapping, Image Processing, Statistics and Machine Learning, Optimization and Parallel Computing toolboxes; for
   the emulation and inference also the Deep Learning Toolbox and the Deep Learning Toolbox Converter for TensorFlow Models.
 * [UQLab](https://www.uqlab.com) Rel. 2.0.0 (third party).
-* Python with TensorFlow 2.13 (Keras 2), keras-tuner, numpy and scipy (`analysis/emulation/requirements_RNN.txt`).
+* Python with TensorFlow 2.13 (Keras 2), keras-tuner, numpy and scipy (see the header of `analysis/emulation/RNN_network_optimisation_JDR.py`).
 * Third-party MATLAB functions: [TODO: list with versions]. Functions that read proprietary or binary data
   (`measures_annual`, `itslive_annual`, `measures_amundsen`, `bedmap2_interp`, `read_Bamber_2004`) are not included.
+  The public datasets that they read (BedMachine, Bedmap2, MEaSUREs, ITS_LIVE, CPOM, ...) have to be downloaded from their
+  original sources [TODO: table with dataset, version, citation and link]; other input data, for example
+  `basins_IMBIE_v2.mat`, can be obtained upon request from the author.
 
 ## Notes
 
-* Many scripts contain machine-specific folders (for example `/mnt/md0/...` and environment variables such as `froot_ua`), marked
-  with `TODO` in the code. Replace them with your own folders.
-* Some scripts adapt code from other authors: `analysis/emulation/RNN_network_optimisation_JDR_v5.py` is adapted from
+* Folders on your computer are written as placeholders that start with `/path/to/`; replace them before running a script
+  (search for `/path/to`): `/path/to/ua/source/folder` (Úa source code, `ua_input/run/UaWrapper.m`), `/path/to/data`
+  (public input datasets, the scripts in `ua_input/1_interpolants` and `figures/Figure5_Plot_AMUND_VelThick.m`),
+  `/path/to/interpolants/` and `/path/to/DiagnosticData/` (`analysis/bayesian_inference/loadvelocitydata.m`),
+  `/path/to/analysis/folder` (`analysis/bayesian_inference/main_BayesianInference_u.m`), `/path/to/home/`
+  (`analysis/postprocessing/main_PerturbationResultsEnsemble.m`), `/path/to/run_tables/`
+  (`ua_input/3_runtable/GenerateRunTable_Inverse.m`), and in the figure scripts `/path/to/BayesianAnalysis/<domain>/`,
+  `/path/to/SYNTH_PIG/ResultsFiles/`, `/path/to/diagnostic_cases/` and `/path/to/inverse_cases/`.
+* Some scripts adapt code from other authors: `analysis/emulation/RNN_network_optimisation_JDR.py` is adapted from
   Rosier et al. (2025, The Cryosphere 19, 2527, https://tc.copernicus.org/articles/19/2527/2025/) [TODO: licence of the original].
 
 ## Use of AI

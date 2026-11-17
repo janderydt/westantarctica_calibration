@@ -17,7 +17,7 @@ function prep_EmulatorTrainingData_deltaU
 %   slidinglaw and cycle (cycle 1: inversion without spinup, cycle 2: inversion after spinup),
 %   only_grounded_ice, SVD settings, do_plots, write_outputs_for_TF.
 %
-% INPUTS (not part of the repository code, see README)
+% INPUTS (data; can be obtained upon request from the author, see README)
 %   Calc_SVD_basis reads the postprocessed diagnostic data
 %     ./DiagnosticData/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat
 %   (variables including MUA_yr2, GF_yr2) and the ensemble parameters (predictors X), and writes
@@ -28,10 +28,9 @@ function prep_EmulatorTrainingData_deltaU
 %   The folders must exist.
 %
 % REQUIRES
-%   Calc_SVD_basis (same folder), PlotNodalBasedQuantities_JDR (modified Ua plotting function in
-%   froot_tools), fig, cmocean (plots), Ua2D_DefaultParameters (Ua)
+%   Calc_SVD_basis (same folder), PlotNodalBasedQuantities_JDR (modified Ua plotting function),
+%   fig, cmocean (plots), Ua2D_DefaultParameters (Ua); all must be on the MATLAB path
 
-addpath(getenv("froot_tools"));
 
 %% -- perturbation data to use
 domain = "AMUND"; % AMUND or SYNTH_PIG
@@ -92,8 +91,6 @@ if use_existing_SVD_basis
     T_mean = SVD_existing.T_mean;
 end
 
-% TODO: for a string array slidinglaw, char() returns one row per element, so slidinglaw_char(1,1,ii) is
-% out of range for ii>1 (slidinglaw_char(ii,1) was probably intended): check
 slidinglaw_char = char(slidinglaw); strtmp="";
 for ii=1:numel(slidinglaw)
     strtmp = strtmp + slidinglaw_char(1,1,ii)+"c"+string(cycle(ii))+"_";
@@ -164,8 +161,6 @@ T_reproj = (B_trunc*B_trunc')\B_trunc; % equivalent to inv(B*B')*B
 %% simulated instantaneous changes in surface speed in response to changes
 %% in ice-sheet geometry (ice thickness, calving front location). The input
 %% data consists of num_nodes nodal values for nun_exp experiments.
-% TODO: with add_measurements_to_SVD=1, T_hat has num_exp-1 rows, but seq (below) is a permutation of
-% num_exp rows, so data = T_hat(seq,:) fails; and the statement below is missing a semicolon
 if add_measurements_to_SVD
     T = SVD_new.T(2:end,:)
     T_hat = (T-repmat(T_mean(:)',size(T,1),1))*T_reproj';
@@ -284,7 +279,6 @@ if do_plots
 end
 
 %% scramble data
-% TODO: no random seed is set (rng); the permutation seq is saved in the output files
 seq = randperm(num_exp);
 data = T_hat(seq,:);
 predictors = X(seq,:);

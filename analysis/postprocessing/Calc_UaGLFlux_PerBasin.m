@@ -2,8 +2,8 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 % Calc_UaGLFlux_PerBasin  Ice flux across the Ua grounding line, per basin.
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
-% Part of the postprocessing of the diagnostic results (see main_PerturbationResultsEnsemble), which are not
-% distributed with this repository.
+% Part of the postprocessing of the diagnostic results (see main_PerturbationResultsEnsemble); the diagnostic
+% results can be obtained upon request from the author.
 %
 % PURPOSE
 %   Calculates the flux across the grounding line of a Ua result and assigns the grounding line segments and
@@ -14,6 +14,7 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 %   B : structure with basin information (x, y: cell arrays with the basin outlines). One way to construct B is
 %       to use the IMBIE basin outlines (routines from C. Greene):
 %         B = load('basins_IMBIE_v2.mat'); B = RemoveIceRisesAndIslands(B);
+%       (basins_IMBIE_v2.mat: data; can be obtained upon request from the author)
 %
 % OUTPUTS
 %   B  : input with added fields per basin: GLpoints (indices of grounding line midpoints), xGL, yGL, qGL (flux)
@@ -22,7 +23,7 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 %
 % REQUIRES
 %   Ua source code (GLgeometry, LineUpEdges2); FluxAcrossGroundingLine_JDR (modified version of Ua's
-%   FluxAcrossGroundingLine, not part of UaSource; not yet received)
+%   FluxAcrossGroundingLine; not yet received)
 
 % GL flux
 GLgeo=GLgeometry(MUA.connectivity,MUA.coordinates,GF,CtrlVar);
