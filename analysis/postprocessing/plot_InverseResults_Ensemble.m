@@ -20,7 +20,7 @@ function plot_InverseResults_Ensemble
 variable_to_plot = 'misfit'; %options: qGL, niter, misfit, qOB, BalancedMelt
 
 slidinglaws = ["Weertman"];
-file_with_inversion_data_to_read = "./InversionData/SYNTH_PIG/SYNTH_PIG_Weertman-yr30_inversiondata_"+slidinglaws+".mat";
+file_with_inversion_data_to_read = "./inversiondata/synth_pig/SYNTH_PIG_Weertmanyr30_inversiondata_"+slidinglaws+".mat";
 
 %% load data
 for nn=1:numel(file_with_inversion_data_to_read)

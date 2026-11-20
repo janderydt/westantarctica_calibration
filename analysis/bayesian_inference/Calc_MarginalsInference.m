@@ -19,8 +19,7 @@ function Calc_MarginalsInference(location,fname)
 %   Calc_HPDsample
 %
 % REQUIRES
-%   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua); the folder ./BayesianAnalysis/ has to be on the
-%   MATLAB path
+%   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua); 
 
 if nargin==0
     Klear;
@@ -29,7 +28,7 @@ if nargin==0
     rng(1,'twister'); % set the random number generator for reproducible results
     uqlab; % initialize uqlab
     %% load sample from existing Bayesian Analysis
-    [fname,location] = uigetfile("./BayesianAnalysis/*.mat","MultiSelect","on");
+    [fname,location] = uigetfile("./bayesiananalysis/*.mat","MultiSelect","on");
 end
 
 fname = string(fname);

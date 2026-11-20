@@ -17,7 +17,7 @@ function Calc_SVD_basis(data,SVD_settings,SVD_filetowrite)
 %   SVD_filetowrite : output file
 %   Without arguments, default settings (first block) are used.
 %   Data (postprocessed diagnostic results, see README):
-%     ./DiagnosticData/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat with
+%     ./diagnosticdata/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat with
 %       MUA_yr2, GF_yr2 (mesh and grounding mask), gaA, gaC, gsA, gsC, m, n, dhdt_err, slidinglaw (one value per
 %       ensemble member) and Delta_u.<perturbation>.map (members x nodes x cycle)
 %     ../ua_input/1_interpolants/<velocity interpolants> (extruded velocities of both years:
@@ -52,7 +52,7 @@ if nargin==0
         strtmp2 = char(slidinglaw(ii));
         strtmp = strtmp+strtmp2(1)+"c"+string(cycle(ii))+"_";
     end
-    SVD_filetowrite = "./Emulators/"+domain+"/SVD_files/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
+    SVD_filetowrite = "./emulators/"+lower(domain)+"/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
         strtmp+"floatingice"+string(1-only_grounded_ice)+"_includemeasurements"+string(add_measurements_to_SVD)+".mat";
 
 else
@@ -76,10 +76,10 @@ for ii=1:numel(slidinglaw)
 
     % Load perturbation data
     try       
-        tmp = load("./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw(ii)+".mat");
+        tmp = load("./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw(ii)+".mat");
         tmp.slidinglaw = repmat(slidinglaw(ii),size(tmp.gaA));        
     catch
-        tmp = load("./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+".mat");
+        tmp = load("./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+".mat");
     end 
     % Ua target grid
     MUA = tmp.MUA_yr2; GF = tmp.GF_yr2;
@@ -153,7 +153,8 @@ for yy=[startyear targetyear]
         fname = "GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat";
     else
         if contains(domain,"AMUND")
-            fname = "GriddedInterpolants_"+string(double(yy))+"-"+string(double(yy)+1)+...
+            yr_first = double(yy); if yy=="2020", yr_first = 2019; end % the velocity of 2020 is the 2019-2020 field
+            fname = "GriddedInterpolants_"+string(yr_first)+"-"+string(yr_first+1)+...
             "_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat";
         elseif contains(domain,"SYNTH_PIG")
             fname = "ScatteredInterpolants_Velocities_SYNTH_PIG_"+yy+".mat";
@@ -161,7 +162,7 @@ for yy=[startyear targetyear]
             error("Do not recognise domain")
         end
     end
-    load("../ua_input/1_interpolants/"+fname);
+    load("../ua_input/1_interpolants/"+lower(domain)+"/"+fname);
     v_tmp = hypot(Fus.Values,Fvs.Values);
     Fu = Fus; Fu.Values = v_tmp;
     std_tmp = hypot(Fxerr.Values,Fyerr.Values);

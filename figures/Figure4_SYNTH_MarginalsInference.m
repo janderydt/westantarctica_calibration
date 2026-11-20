@@ -20,7 +20,7 @@ function Figure4_SYNTH_MarginalsInference
 Klear;
 
 % folder with the Bayesian analysis files (see getfilename at the end of this file)
-froot = "/path/to/BayesianAnalysis/SYNTH_PIG/";
+froot = "../analysis/bayesiananalysis/synth_pig/";
 
 %% =========================================
 %% INITIALIZE UQLAB

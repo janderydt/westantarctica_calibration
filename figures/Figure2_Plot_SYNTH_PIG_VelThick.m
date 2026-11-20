@@ -1,14 +1,16 @@
 function Figure2_Plot_SYNTH_PIG_VelThick
 % Figure2_Plot_SYNTH_PIG_VelThick  Figure 2: synthetic glacier (SYNTH_PIG) and the change over the calibration period.
 %
-% *** FOR TRANSPARENCY, NOT RUNNABLE ***
-% Needs the results of the synthetic Ua experiments (these data can be obtained upon request from the author), see the load statements.
-%
 % PURPOSE
 %   (a) 3D view of the synthetic glacier after 500 years of the spinup with the cold ocean temperature profile and Weertman sliding ("cold_Weertman"; "00500k000" in the file name is 500.000 years), with the
 %   grounding line and the surface velocity vectors; (b, c) ice thickness and speed at t0 = 30 years of the "warm"
 %   experiment; (d-i) changes in ice thickness (d-f) and in speed (g-i) between t0 and t1 = 35, 50, 75 years, with the
 %   grounding lines of t0 and t1. Saves ./Figure2.png.
+%
+% FILES READ (result files of the synthetic experiments, included in the data archive, see README)
+%   ../analysis/ua_resultsfiles/synth_pig/ResultsFile-cold_Weertman-00500k000yr.mat and
+%   ../analysis/ua_resultsfiles/synth_pig/ResultsFile-warm_Weertman-000<t>k000yr.mat for t = 30, 35, 50 and 75 (years); these are written by
+%   DefineOutputs (ua_input/0_synth_pig); "k" in the file name stands for the decimal point
 %
 % REQUIRES
 %   Ua source code (Plot_sbB, PlotGroundingLines); cmocean, fig (third party); PlotNodalBasedQuantities_JDR
@@ -30,7 +32,7 @@ for i = 1:6
     ax_fig(3+i) = nexttile(tlo_fig,6+i); hold on;
 end
 
-load("/path/to/SYNTH_PIG/ResultsFiles/cold_Weertman/ResultsFile-cold_Weertman-00500k000yr.mat");
+load("../analysis/ua_resultsfiles/synth_pig/ResultsFile-cold_Weertman-00500k000yr.mat");
 
 lowercase_alphabet = 'a':'z';
 
@@ -84,7 +86,7 @@ title(ax_fig(1),"");
 CtrlVar.PlotGLs=0;
 [xGL0,yGL0]=PlotGroundingLines(CtrlVar,MUA,F.GF);
 
-load("/path/to/SYNTH_PIG/ResultsFiles/warm_Weertman/ResultsFile-warm_Weertman-00030k000yr.mat");
+load("../analysis/ua_resultsfiles/synth_pig/ResultsFile-warm_Weertman-00030k000yr.mat");
 
 Fub_t0 = scatteredInterpolant(MUA.coordinates(:,1),MUA.coordinates(:,2),F.ub);
 Fvb_t0 = scatteredInterpolant(MUA.coordinates(:,1),MUA.coordinates(:,2),F.vb);
@@ -129,7 +131,7 @@ t1 = [35 50 75];
 
 for tt=1:numel(t1)
 
-    load("/path/to/SYNTH_PIG/ResultsFiles/warm_Weertman/ResultsFile-warm_Weertman-000"+string(t1(tt))+"k000yr.mat");
+    load("../analysis/ua_resultsfiles/synth_pig/ResultsFile-warm_Weertman-000"+string(t1(tt))+"k000yr.mat");
 
     ub_t1 = F.ub; ub_t1(F.GF.node<0.5)=nan;
     vb_t1 = F.vb; vb_t1(F.GF.node<0.5)=nan;

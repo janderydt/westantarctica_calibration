@@ -17,15 +17,15 @@ function Calc_BayesianInference(UserVar)
 %   do_plots. Without arguments default values are used.
 %
 % FILES READ (data, relative to the current folder; can be obtained upon request from the author, see README)
-%   ./Emulators/<domain>/RNN/TF_files/<modelversion>_<domain>_<perturbation>_<years>_<slidinglaw>_cycle<c>_floatingice<f>_includemeasurements0_*Comp<N>*
+%   ./emulators/<domain>/<modelversion>_<domain>_<perturbation>_<years>_<slidinglaw>_cycle<c>_floatingice<f>_includemeasurements0_*Comp<N>*
 %       (trained emulator: TensorFlow SavedModel imported with importNetworkFromTensorFlow, or a .keras file)
-%   ./Emulators/<domain>/RNN/mat_files/data_*.mat (X_train_C/S, T_train_C/S), SVD_*.mat (T_reproj, T_mean),
+%   ./emulators/<domain>/data_*.mat (X_train_C/S, T_train_C/S), SVD_*.mat (T_reproj, T_mean),
 %       MSE_RNN_<modelversion>_*.mat (mse_RNN: emulator mean squared errors, from plot_Emulator_MSE, analysis/emulation)
-%   ./DiagnosticData/<domain>/<domain>_Delta_u_<years>[_<slidinglaw>].mat (MUA_yr2, GF_yr2)
+%   ./diagnosticdata/<domain>/<domain>_Delta_u_<years>[_<slidinglaw>].mat (MUA_yr2, GF_yr2)
 %   observed velocities: loadvelocitydata (same folder)
 %
 % OUTPUT
-%   ./BayesianAnalysis/<domain>/<name>_v<k>.mat with UserVar and myBayesianAnalysis (UQLab), and the files
+%   ./bayesiananalysis/<domain>/<name>_v<k>.mat with UserVar and myBayesianAnalysis (UQLab), and the files
 %   written by Calc_MarginalsInference (same folder). The random number generator is seeded (rng(1)).
 %
 % REQUIRES
@@ -190,7 +190,7 @@ myBayesianAnalysis = uq_createAnalysis(BayesOpts);
 %% postprocessing and save
 uq_postProcessInversionMCMC(myBayesianAnalysis,'pointEstimate','MAP','gelmanRubin','true');
 
-UserVar.location = pwd+"/BayesianAnalysis/"+UserVar.domain+"/";
+UserVar.location = pwd+"/bayesiananalysis/"+lower(UserVar.domain)+"/";
 if ~exist(UserVar.location,"dir")
     mkdir(UserVar.location);
 end
@@ -304,13 +304,13 @@ if isempty(M)
         % what parameters the emulator is trained for, and in what order
         % The default is X = [log10(gaA) log10(gaC) log10(gsA) log10(gsC) m n log10(dhdt_err)];
 
-        TF_dir = dir("./Emulators/"+domain+"/RNN/TF_files/"+modelversion+"_"+domain+"_"+perturbation+"_"+years(ii)+...
+        TF_dir = dir("./emulators/"+lower(domain)+"/"+modelversion+"_"+domain+"_"+perturbation+"_"+years(ii)+...
             "_"+strjoin(slidinglaw(ii,:),"-")+"_cycle"+string(cycle(ii))+"_floatingice"+string(1-only_grounded_ice(ii))+...
             "_includemeasurements0"+"_*Comp"+string(SVDcomponents(ii))+"*");
 
         if numel(TF_dir)>1
 
-            error("There seem to be multiple emulators with this name: ./Emulators/"+domain+"/RNN/TF_files/"+...
+            error("There seem to be multiple emulators with this name: ./emulators/"+lower(domain)+"/"+...
                 modelversion+"_"+domain+"_"+perturbation+"_"+years(ii)+...
             "_"+strjoin(slidinglaw(ii,:),"-")+"_cycle"+string(cycle(ii))+"_floatingice"+string(1-only_grounded_ice(ii))+...
             "_includemeasurements0"+"_*Comp"+string(SVDcomponents(ii))+"*");
@@ -327,17 +327,17 @@ if isempty(M)
             M(ii).net=initialize(net_tmp);
         end
 
-        data_file = dir("./Emulators/"+domain+"/RNN/mat_files/data_"+domain+"_"+perturbation+"_"+years(ii)+...
+        data_file = dir("./emulators/"+lower(domain)+"/data_"+domain+"_"+perturbation+"_"+years(ii)+...
             "_"+strjoin(slidinglaw(ii,:),"-")+"_cycle"+string(cycle(ii))+"_floatingice"+string(1-only_grounded_ice(ii))+...
             "_includemeasurements0"+"_*Comp"+string(SVDcomponents(ii))+"*.mat");
         load(data_file.folder+"/"+data_file.name,"X_train_C","X_train_S","T_train_C","T_train_S");
     
-        SVD_file = dir("./Emulators/"+domain+"/RNN/mat_files/SVD_"+domain+"_"+perturbation+"_"+years(ii)+...
+        SVD_file = dir("./emulators/"+lower(domain)+"/SVD_"+domain+"_"+perturbation+"_"+years(ii)+...
             "_"+strjoin(slidinglaw(ii,:),"-")+"_cycle"+string(cycle(ii))+"_floatingice"+string(1-only_grounded_ice(ii))+...
             "_includemeasurements0"+"_*Comp"+string(SVDcomponents(ii))+"*.mat");
         load(SVD_file.folder+"/"+SVD_file.name,"T_reproj","T_mean");
 
-        MSE_file = dir("./Emulators/"+domain+"/RNN/mat_files/MSE_RNN_"+modelversion+"_"+domain+"_"+perturbation+"_"+years(ii)+...
+        MSE_file = dir("./emulators/"+lower(domain)+"/MSE_RNN_"+modelversion+"_"+domain+"_"+perturbation+"_"+years(ii)+...
             "_"+strjoin(slidinglaw(ii,:),"-")+"_cycle"+string(cycle(ii))+"_floatingice"+string(1-only_grounded_ice(ii))+...
             "_includemeasurements0"+"_*Comp"+string(SVDcomponents(ii))+"*.mat");
         load(MSE_file.folder+"/"+MSE_file.name);
@@ -392,9 +392,9 @@ if isempty(M)
         % range l (m)
         if std_ua~=0 || l~=0
             try
-                load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+"_"+slidinglaw(ii,1)+".mat","MUA_yr2","GF_yr2");
+                load("diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+yearstr+"_"+slidinglaw(ii,1)+".mat","MUA_yr2","GF_yr2");
             catch
-                load("DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yearstr+".mat","MUA_yr2","GF_yr2");
+                load("diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+yearstr+".mat","MUA_yr2","GF_yr2");
             end
             MUA = MUA_yr2;
             GF= GF_yr2;

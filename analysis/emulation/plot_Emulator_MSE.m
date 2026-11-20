@@ -23,7 +23,7 @@ function plot_Emulator_MSE
 %   "v5_tuned_model_full", "dh", "Weertmanyr30", "Weertmanyr75", SVDcomponents 10).
 %
 % FILES READ (data; can be obtained upon request from the author, see README)
-%   ./DiagnosticData/<domain>/<domain>_Delta_u_<years>[_<slidinglaw>].mat, and in ./Emulators/<domain>/RNN: the trained TensorFlow model in
+%   ./diagnosticdata/<domain>/<domain>_Delta_u_<years>[_<slidinglaw>].mat, and in ./emulators/<domain>: the trained TensorFlow model in
 %   TF_files and the data_*.mat and SVD_*.mat files in mat_files (written by prepare_data_for_Delta_u_emulators and
 %   RNN_network_optimisation_JDR.py)
 %
@@ -52,13 +52,13 @@ if targetyear ~= ""
     for ss=1:numel(slidinglaw)
         years=startyear+"-"+targetyear;
         try
-            datafile = "./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+years+"_"+slidinglaw(ss)+".mat";
+            datafile = "./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+years+"_"+slidinglaw(ss)+".mat";
             tmp=load(datafile);
             MUA = tmp.MUA_yr2; GF = tmp.GF_yr2;
             Ttmp = tmp.Delta_u.(perturbation).map(:,:,cycle);
             T = [T; Ttmp];
         catch
-            datafile = "./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+years+".mat";
+            datafile = "./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+years+".mat";
             tmp=load(datafile);
             MUA =tmp.MUA_yr2; GF = tmp.GF_yr2;
             T = tmp.Delta_u.(perturbation).map(:,:,cycle);
@@ -97,7 +97,7 @@ end
 %% RNN Tensorflow
 if plotRNN
 
-    TF_dir = dir("./Emulators/"+domain+"/RNN/TF_files/"+modelversion+"_"+domain+"_"+perturbation+"_"+years+...
+    TF_dir = dir("./emulators/"+lower(domain)+"/"+modelversion+"_"+domain+"_"+perturbation+"_"+years+...
         "_"+join(slidinglaw,"-")+"_cycle"+string(cycle)+"_floatingice"+string(1-only_grounded_ice)+...
         "_includemeasurements"+string(include_measurements)+"_*Comp"+string(SVDcomponents)+"*");
 
@@ -108,12 +108,12 @@ if plotRNN
         netUpdated=initialize(net);
     end
 
-    data_file = dir("./Emulators/"+domain+"/RNN/mat_files/data_"+domain+"_"+perturbation+"_"+years+...
+    data_file = dir("./emulators/"+lower(domain)+"/data_"+domain+"_"+perturbation+"_"+years+...
         "_"+join(slidinglaw,"-")+"_cycle"+string(cycle)+"_floatingice"+string(1-only_grounded_ice)+...
         "_includemeasurements"+string(include_measurements)+"_*Comp"+string(SVDcomponents)+"*.mat");
     load(data_file.folder+"/"+data_file.name);
 
-    SVD_file = dir("./Emulators/"+domain+"/RNN/mat_files/SVD_"+domain+"_"+perturbation+"_"+years+...
+    SVD_file = dir("./emulators/"+lower(domain)+"/SVD_"+domain+"_"+perturbation+"_"+years+...
         "_"+join(slidinglaw,"-")+"_cycle"+string(cycle)+"_floatingice"+string(1-only_grounded_ice)+...
         "_includemeasurements"+string(include_measurements)+"_*Comp"+string(SVDcomponents)+"*.mat");
     load(SVD_file.folder+"/"+SVD_file.name);

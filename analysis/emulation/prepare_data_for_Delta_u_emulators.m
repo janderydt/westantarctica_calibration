@@ -19,12 +19,12 @@ function prepare_data_for_Delta_u_emulators
 %
 % INPUTS (data; can be obtained upon request from the author, see README)
 %   Calc_SVD_basis reads the postprocessed diagnostic data
-%     ./DiagnosticData/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat
+%     ./diagnosticdata/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat
 %   (variables including MUA_yr2, GF_yr2) and the ensemble parameters (predictors X), and writes
-%     ./Emulators/<domain>/SVD_files/SVD_<...>.mat  (S, T, T_mean, T_meas, X)
+%     ./emulators/<domain>/SVD_<...>.mat  (S, T, T_mean, T_meas, X)
 %
 % OUTPUTS
-%   Figures in ./Figures (.png); ./Emulators/<domain>/RNN/mat_files/*.mat (data for the RNN training).
+%   Figures in ./Figures (.png); ./emulators/<domain>/*.mat (data for the RNN training).
 %   The folders must exist.
 %
 % REQUIRES
@@ -75,7 +75,7 @@ SVD_settings.add_measurements_to_SVD = add_measurements_to_SVD;
 
 if use_existing_SVD_basis
     % check that basis exists
-    SVD_filetoread = "./Emulators/"+domain+"/SVD_files/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
+    SVD_filetoread = "./emulators/"+lower(domain)+"/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
         SVD_basistoread+"_floatingice"+string(1-only_grounded_ice)+"_includemeasurements"+string(add_measurements_to_SVD)+".mat";
     if ~exist(SVD_filetoread)
         warning("use_existing_SVD_basis=1, but requested basis does not exist. Creating new SVD file. Make sure you have set slidinglaw, cycle and only_grounded_ice to the correct values.")
@@ -95,7 +95,7 @@ slidinglaw_char = char(slidinglaw); strtmp="";
 for ii=1:numel(slidinglaw)
     strtmp = strtmp + slidinglaw_char(1,1,ii)+"c"+string(cycle(ii))+"_";
 end
-SVD_filetowrite = "./Emulators/"+domain+"/SVD_files/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
+SVD_filetowrite = "./emulators/"+lower(domain)+"/SVD_"+domain+"_"+perturbation+"_"+startyear+"-"+targetyear+"_"+...
     strtmp+"floatingice"+string(1-only_grounded_ice)+"_includemeasurements"+string(add_measurements_to_SVD)+".mat";
 Calc_SVD_basis(data,SVD_settings,SVD_filetowrite);
 SVD_new = load(SVD_filetowrite);
@@ -182,9 +182,9 @@ if do_plots
     
         % load Ua mesh
         try 
-            load("./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw(ss)+".mat","MUA_yr2","GF_yr2");
+            load("./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw(ss)+".mat","MUA_yr2","GF_yr2");
         catch
-            load("./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+".mat","MUA_yr2","GF_yr2");
+            load("./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+".mat","MUA_yr2","GF_yr2");
         end
         MUA = MUA_yr2; GF = GF_yr2;
     
@@ -307,14 +307,14 @@ if write_outputs_for_TF
     T_val = (T_val-repmat(T_train_C,num_val,1))./repmat(T_train_S,num_val,1);
     T_test = (T_test-repmat(T_train_C,num_test,1))./repmat(T_train_S,num_test,1);
 
-    fname1 = sprintf('./Emulators/%s/RNN/mat_files/data_%s_%s_%s-%s_%s_cycle%s_floatingice%s_includemeasurements%s_Basis_%s-Comp%s-Var%s',...
-        domain,domain,perturbation,startyear,targetyear,...
-        join(slidinglaw,"-"),join(string(cycle),"-"),string(1-only_grounded_ice),string(add_measurements_to_SVD),...
+    fname1 = sprintf('./emulators/%s/data_%s_%s_%s-%s_%s_cycle%s_floatingice%s_includemeasurements%s_Basis_%s-Comp%s-Var%s',...
+        lower(domain),domain,perturbation,startyear,targetyear,...
+        join(slidinglaw,"-"),join(string(unique(cycle,"stable")),"-"),string(1-only_grounded_ice),string(add_measurements_to_SVD),...
         strrep(SVD_basistoread,"_","-"),...
         string(T_nComp),strrep(string(round(SVD_targetpercentage*1e4)/1e2),".","k"));
-    fname2 = sprintf('./Emulators/%s/RNN/mat_files/SVD_%s_%s_%s-%s_%s_cycle%s_floatingice%s_includemeasurements%s_Basis_%s-Comp%s-Var%s',...
-        domain,domain,perturbation,startyear,targetyear,...
-        join(slidinglaw,"-"),join(string(cycle),"-"),string(1-only_grounded_ice),string(add_measurements_to_SVD), ...
+    fname2 = sprintf('./emulators/%s/SVD_%s_%s_%s-%s_%s_cycle%s_floatingice%s_includemeasurements%s_Basis_%s-Comp%s-Var%s',...
+        lower(domain),domain,perturbation,startyear,targetyear,...
+        join(slidinglaw,"-"),join(string(unique(cycle,"stable")),"-"),string(1-only_grounded_ice),string(add_measurements_to_SVD), ...
         strrep(SVD_basistoread,"_","-"),...
         string(T_nComp),strrep(string(round(SVD_targetpercentage*1e4)/1e2),".","k"));
     save(fname1,'X_train','X_val','X_test','T_train','T_val','T_test',...

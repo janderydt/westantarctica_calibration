@@ -3,7 +3,8 @@ function [B,GL] = Calc_UaGLFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 %
 % *** FOR TRANSPARENCY, NOT RUNNABLE ***
 % Part of the postprocessing of the diagnostic results (see Calc_PerturbationResults_Ensemble); the diagnostic
-% results can be obtained upon request from the author.
+% results can be obtained upon request from the author. It also calls FluxAcrossGroundingLine_JDR, which is not part of
+% this repository yet.
 %
 % PURPOSE
 %   Calculates the flux across the grounding line of a Ua result and assigns the grounding line segments and

@@ -9,7 +9,7 @@ function plot_myBayesianAnalysis(myBayesianAnalysis,UserVar)
 %       distributions (histograms of the last 10% of the chains, fitted marginals, prior, maximum a posteriori point
 %       MAP) on the diagonal and scatter plots of pairs of parameters below it. For AMUND the Ua training samples
 %       (ensemble members) and a sample of 10 points of the high-density region (95% of the density-weighted mass, Calc_HPDsample; saved
-%       in ./BayesianAnalysis/<domain>/ as X_HPD) are added; for SYNTH_PIG the true values (n = 3, m = 4);
+%       in ./bayesiananalysis/<domain>/ as X_HPD) are added; for SYNTH_PIG the true values (n = 3, m = 4);
 %   (3) AMUND only, after a question dialog: the difference between modelled and observed change in speed for each
 %       epoch, for user-chosen parameters (emulator) or the sample of the high-density region (the mean of the nearest Ua simulations),
 %       saved as ./Figures/Delta_u_Mod_vs_Meas_<name>_v<k>.png (inset of Figure 6).
@@ -20,8 +20,8 @@ function plot_myBayesianAnalysis(myBayesianAnalysis,UserVar)
 % REQUIRES
 %   UQLab Rel. 2.0.0, Calc_HPDsample (same folder), loadvelocitydata (same folder), cmocean, fig (third party),
 %   PlotMeshScalarVariable, PlotGroundingLines (Ua); MATLAB Statistics and Machine Learning Toolbox (hist3,
-%   knnsearch, isoutlier), Deep Learning Toolbox with the Converter for TensorFlow Models; data in ./DiagnosticData and
-%   ./Emulators (see Calc_BayesianInference)
+%   knnsearch, isoutlier), Deep Learning Toolbox with the Converter for TensorFlow Models; data in ./diagnosticdata and
+%   ./emulators (see Calc_BayesianInference)
 
 gpuDevice([]);
 setenv('CUDA_VISIBLE_DEVICES','');
@@ -32,7 +32,7 @@ rng(1,'twister'); % set the random number generator for reproducible results
 uqlab; % initialize uqlab
 
 if nargin==0
-    [fname,location] = uigetfile("./BayesianAnalysis/","MultiSelect","on");
+    [fname,location] = uigetfile("./bayesiananalysis/","MultiSelect","on");
     fname=string(fname);
     if numel(fname)>2
         error("Can only plot 2 distributions");
@@ -197,9 +197,9 @@ for Dist=1:numel(fname)
     yr2 = years_tmp(2);
     slidinglaw = UserVar.slidinglaw(1);
     try
-        load("./DiagnosticData/"+UserVar.domain+"/"+UserVar.domain+"_Delta_u_"+yr1+"-"+yr2+"_"+slidinglaw+".mat");
+        load("./diagnosticdata/"+lower(UserVar.domain)+"/"+UserVar.domain+"_Delta_u_"+yr1+"-"+yr2+"_"+slidinglaw+".mat");
     catch
-        load("./DiagnosticData/"+UserVar.domain+"/"+UserVar.domain+"_Delta_u_"+yr1+"-"+yr2+".mat");
+        load("./diagnosticdata/"+lower(UserVar.domain)+"/"+UserVar.domain+"_Delta_u_"+yr1+"-"+yr2+".mat");
     end
     ndist = numel(myPosteriorDist);
     for ind_discrete = 1:ndist
@@ -218,12 +218,12 @@ for Dist=1:numel(fname)
 
     %% load the samples of the high-density region
     fname_HPD = strrep(fname,"BayesianAnalysis","HPD");
-    if ~exist(fname_HPD,"file")
+    if ~exist("./bayesiananalysis/"+lower(UserVar.domain)+"/"+fname_HPD,"file")
         X_HPD = Calc_HPDsample(myPosteriorDist,10);
         % save to file
-        save("./BayesianAnalysis/"+UserVar.domain+"/"+fname_HPD,"X_HPD");
+        save("./bayesiananalysis/"+lower(UserVar.domain)+"/"+fname_HPD,"X_HPD");
     else
-        load("./BayesianAnalysis/"+UserVar.domain+"/"+fname_HPD);
+        load("./bayesiananalysis/"+lower(UserVar.domain)+"/"+fname_HPD);
     end
 
     iycounter = 0;
@@ -524,11 +524,11 @@ for Dist=1:numel(fname)
             H=fig('units','inches','width',40*12/72.27,'height',50*12/72.27,'fontsize',14,'font','Helvetica');   
             tlo = tiledlayout(2,2,"TileSpacing","tight");
     
-            tmp_grids = load("./DiagnosticData/AMUND/AMUND_perturbation_grids.mat");
+            tmp_grids = load("./diagnosticdata/amund/AMUND_perturbation_grids.mat");
     
             for yy=1:numel(UserVar.years)
     
-                tmp = load("./DiagnosticData/AMUND/AMUND_Delta_u_"+UserVar.years(yy)+"_HPDSample.mat");
+                tmp = load("./diagnosticdata/amund/AMUND_Delta_u_"+UserVar.years(yy)+"_HPDSample.mat");
     
                 %% OBS
                 out = loadvelocitydata(UserVar.domain,UserVar.dataformat(yy),UserVar.years(yy),0);
@@ -541,7 +541,7 @@ for Dist=1:numel(fname)
     
                     %% USER CHOICE
     
-                    TF_dir = dir("./Emulators/"+UserVar.domain+"/RNN/TF_files/"+UserVar.modelversion+"_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
+                    TF_dir = dir("./emulators/"+lower(UserVar.domain)+"/"+UserVar.modelversion+"_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
                         "_"+join(UserVar.slidinglaw(yy,:),"-")+"_cycle"+string(UserVar.cycle(yy))+"_floatingice"+string(1-UserVar.only_grounded_ice(yy))+...
                         "_includemeasurements0_*Comp"+string(UserVar.SVDcomponents(yy))+"*");
     
@@ -554,12 +554,12 @@ for Dist=1:numel(fname)
                         Net=initialize(Net_tmp);
                     end
     
-                    data_file = dir("./Emulators/"+UserVar.domain+"/RNN/mat_files/data_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
+                    data_file = dir("./emulators/"+lower(UserVar.domain)+"/data_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
                         "_"+join(UserVar.slidinglaw(yy,:),"-")+"_cycle"+string(UserVar.cycle(yy))+"_floatingice"+string(1-UserVar.only_grounded_ice(yy))+...
                         "_includemeasurements0"+"_*Comp"+string(UserVar.SVDcomponents(yy))+"*.mat");
                     load(data_file.folder+"/"+data_file.name,"X_train_C","X_train_S","T_train_C","T_train_S");
                 
-                    SVD_file = dir("./Emulators/"+UserVar.domain+"/RNN/mat_files/SVD_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
+                    SVD_file = dir("./emulators/"+lower(UserVar.domain)+"/SVD_"+UserVar.domain+"_"+UserVar.perturbation+"_"+UserVar.years(yy)+...
                         "_"+join(UserVar.slidinglaw(yy,:),"-")+"_cycle"+string(UserVar.cycle(yy))+"_floatingice"+string(1-UserVar.only_grounded_ice(yy))+...
                         "_includemeasurements0"+"_*Comp"+string(UserVar.SVDcomponents(yy))+"*.mat");
                     load(SVD_file.folder+"/"+SVD_file.name,"T_reproj","T_mean","B_trunc");

@@ -18,7 +18,7 @@ function Figure7_AMUND_MarginalsInference
 Klear;
 
 % folder with the Bayesian analysis files (see getfilename at the end of this file)
-froot = "/path/to/BayesianAnalysis/AMUND/";
+froot = "../analysis/bayesiananalysis/amund/";
 
 %% =========================================
 %% INITIALIZE UQLAB

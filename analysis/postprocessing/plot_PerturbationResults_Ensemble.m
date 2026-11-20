@@ -13,7 +13,7 @@ function plot_PerturbationResults_Ensemble(domain,diagnostic_to_plot,parameter_t
 %                   against one of the parameters m, n, gaA, gaC, gsA, gsC (next to it a histogram of the values returned by
 %                   Calc_Delta_qGL and the change in discharge of Rignot et al. 2019).
 %   The file written for "Delta_u" is the Delta_u file read by Calc_SVD_basis and loadvelocitydata:
-%   ./DiagnosticData/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat with the variables Delta_u
+%   ./diagnosticdata/<domain>/<domain>_Delta_u_<startyear>-<targetyear>[_<slidinglaw>].mat with the variables Delta_u
 %   (Delta_u.<perturbation>.map: members x nodes x cycles, and .<basin>: means), MUA_yr1, MUA_yr2, GF_yr1, GF_yr2, misfit, gsA,
 %   gsC, gaA, gaC, dhdt_err, m, n, slidinglaw. The file is only written if file_with_perturbation_data_to_write is given
 %   (see the example below).
@@ -23,9 +23,9 @@ function plot_PerturbationResults_Ensemble(domain,diagnostic_to_plot,parameter_t
 %   startyear, targetyear, file_with_perturbation_data_to_read, file_with_perturbation_data_to_write
 %
 % FILES READ (data; can be obtained upon request from the author, see README)
-%   ./DiagnosticData/<domain>/<domain>_<startyear>_perturbationdata.mat (Calc_PerturbationResults_Ensemble),
-%   ./InversionData/<domain>/<domain>_<startyear>_inversiondata_<slidinglaw>.mat (Calc_InverseResults_Ensemble),
-%   ./DiagnosticData/<domain>/<domain>_perturbation_grids.mat (meshes MUA_<year> and grounding masks GF_<year> of the
+%   ./diagnosticdata/<domain>/<domain>_<startyear>_perturbationdata.mat (Calc_PerturbationResults_Ensemble),
+%   ./inversiondata/<domain>/<domain>_<startyear>_inversiondata_<slidinglaw>.mat (Calc_InverseResults_Ensemble),
+%   ./diagnosticdata/<domain>/<domain>_perturbation_grids.mat (meshes MUA_<year> and grounding masks GF_<year> of the
 %   years), basins_IMBIE_v2.mat in the current folder, and for "Delta_u" the extruded velocity and geometry interpolants in
 %   ../ua_input/1_interpolants
 %
@@ -43,8 +43,8 @@ function plot_PerturbationResults_Ensemble(domain,diagnostic_to_plot,parameter_t
 % startyear = "Weertmanyr30";
 % targetyear =  "Weertmanyr50";
 % diagnostic_to_plot = "Delta_u";
-% file_with_perturbation_data_to_read = "./DiagnosticData/"+domain+"/"+domain+"_"+startyear+"_perturbationdata.mat";
-% file_with_perturbation_data_to_write = "./DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw+".mat";
+% file_with_perturbation_data_to_read = "./diagnosticdata/"+lower(domain)+"/"+domain+"_"+startyear+"_perturbationdata.mat";
+% file_with_perturbation_data_to_write = "./diagnosticdata/"+lower(domain)+"/"+domain+"_Delta_u_"+startyear+"-"+targetyear+"_"+slidinglaw+".mat";
 % plot_PerturbationResults_Ensemble(domain,diagnostic_to_plot,parameter_to_plot,cycles_to_plot,slidinglaw,startyear,targetyear,...
 %   file_with_perturbation_data_to_read,file_with_perturbation_data_to_write);
 
@@ -56,7 +56,7 @@ if nargin==0
     slidinglaw = "Weertman"; % Weertman or Umbi
     startyear = "2000";
     targetyear =  "2020";
-    file_with_perturbation_data_to_read = "./DiagnosticData/"+domain+"/"+domain+"_"+startyear+"_perturbationdata.mat";
+    file_with_perturbation_data_to_read = "./diagnosticdata/"+lower(domain)+"/"+domain+"_"+startyear+"_perturbationdata.mat";
 end
 
 if contains(domain,"AMUND")
@@ -90,7 +90,7 @@ if diagnostic_to_plot=="Delta_u"
 
     %% corresponding GF masks
     if contains(domain,"AMUND")
-        load("./DiagnosticData/AMUND/AMUND_perturbation_grids.mat");
+        load("./diagnosticdata/amund/AMUND_perturbation_grids.mat");
         switch startyear
             case "2000"
                 MUA_yr1 = MUA_2000;
@@ -126,7 +126,7 @@ if diagnostic_to_plot=="Delta_u"
                 GF_yr2 = GF_2020;
         end
     elseif contains(domain,"SYNTH_PIG")
-        load("./DiagnosticData/SYNTH_PIG/SYNTH_PIG_perturbation_grids.mat");
+        load("./diagnosticdata/synth_pig/SYNTH_PIG_perturbation_grids.mat");
         switch startyear
             case "Weertmanyr30"
                 MUA_yr1 = MUA_Weertmanyr30;
@@ -218,7 +218,7 @@ end
 data_inverse = [];
 
 for ss=1:numel(slidinglaw)
-    tmp = load("./InversionData/"+domain+"/"+domain+"_"+startyear+"_inversiondata_"+slidinglaw(ss)+".mat");
+    tmp = load("./inversiondata/"+lower(domain)+"/"+domain+"_"+startyear+"_inversiondata_"+slidinglaw(ss)+".mat");
     data_inverse = [data_inverse tmp.data];
 end
 
@@ -593,14 +593,15 @@ switch diagnostic_to_plot
 
         % observed change in velocity
         if startyear=="yr2000"
-            load("../ua_input/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED","Fus","Fvs","Fxerr","Fyerr");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED","Fus","Fvs","Fxerr","Fyerr");
         else
             if contains(domain,"AMUND")
-                load("../ua_input/1_interpolants/GriddedInterpolants_"+erase(startyear,"yr")+"-"+...
-                    string(double(erase(startyear,"yr"))+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
+                yr_first = double(erase(startyear,"yr")); if yr_first==2020, yr_first = 2019; end % the velocity of 2020 is the 2019-2020 field
+                load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_"+string(yr_first)+"-"+...
+                    string(yr_first+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
                     "Fus","Fvs","Fxerr","Fyerr");
             elseif contains(domain,"SYNTH_PIG")
-                load("../ua_input/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+startyear+".mat","Fus","Fvs","Fxerr","Fyerr");
+                load("../ua_input/1_interpolants/"+lower(domain)+"/ScatteredInterpolants_Velocities_SYNTH_PIG_"+startyear+".mat","Fus","Fvs","Fxerr","Fyerr");
             end
         end
         uxstart = Fus(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
@@ -611,14 +612,15 @@ switch diagnostic_to_plot
         uerrstart = sqrt((uxstart.^2.*uxerrstart.^2+uystart.^2.*uyerrstart.^2)./(uxstart.^2+uystart.^2+eps));
 
         if targetyear=="yr2000"
-            load("../ua_input/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities","Fus","Fvs","Fxerr","Fyerr");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED","Fus","Fvs","Fxerr","Fyerr");
         else
             if contains(domain,"AMUND")
-                load("../ua_input/1_interpolants/GriddedInterpolants_"+string(double(erase(targetyear,"yr")))+"-"+...
-                    string(double(erase(targetyear,"yr"))+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
+                yr_first = double(erase(targetyear,"yr")); if yr_first==2020, yr_first = 2019; end % the velocity of 2020 is the 2019-2020 field
+                load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_"+string(yr_first)+"-"+...
+                    string(yr_first+1)+"_MeaSUREs_ITSLIVE_Velocities_EXTRUDED",...
                     "Fus","Fvs","Fxerr","Fyerr");
             elseif contains(domain,"SYNTH_PIG")
-                load("../ua_input/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_"+targetyear+".mat","Fus","Fvs","Fxerr","Fyerr");
+                load("../ua_input/1_interpolants/"+lower(domain)+"/ScatteredInterpolants_Velocities_SYNTH_PIG_"+targetyear+".mat","Fus","Fvs","Fxerr","Fyerr");
             end
         end
         uxtarget = Fus(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
@@ -630,14 +632,14 @@ switch diagnostic_to_plot
 
         % observed change in ice-sheet geometry
         if contains(domain,"AMUND")
-            load("../ua_input/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(startyear,"yr")+"_EXTRUDED","Fs","Fb");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_Geometry_01-Jun-"+erase(startyear,"yr")+"_EXTRUDED","Fs","Fb");
             hstart = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
-            load("../ua_input/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+erase(targetyear,"yr")+"_EXTRUDED","Fs","Fb");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/GriddedInterpolants_Geometry_01-Jun-"+erase(targetyear,"yr")+"_EXTRUDED","Fs","Fb");
             htarget = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
         elseif contains(domain,"SYNTH_PIG")
-            load("../ua_input/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+startyear,"Fs","Fb");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/ScatteredInterpolants_Geometry_SYNTH_PIG_"+startyear,"Fs","Fb");
             hstart = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
-            load("../ua_input/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+targetyear,"Fs","Fb");
+            load("../ua_input/1_interpolants/"+lower(domain)+"/ScatteredInterpolants_Geometry_SYNTH_PIG_"+targetyear,"Fs","Fb");
             htarget = Fs(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2)) - Fb(MUA_target.coordinates(:,1),MUA_target.coordinates(:,2));
         end
 

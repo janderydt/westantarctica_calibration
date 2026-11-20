@@ -16,7 +16,7 @@ function Calc_InverseResults_Ensemble
 %   final misfit and regularisation of the inversion. The file is updated incrementally.
 %   Settings as supplied: the AMUND posterior sample ("HPDSample") run table. For SYNTH_PIG (earlier runs):
 %   UserVar.Table = UserVar.home+"4_inverse/RunTable_SYNTH_PIG_nsmbl_Weertmanyr30_Adjoint_Weertman_Enriched0_24-10-2025.csv",
-%   inversiondata_filename = "./InversionData/SYNTH_PIG/SYNTH_PIG_Weertmanyr30_inversiondata_Weertman.mat".
+%   inversiondata_filename = "./inversiondata/synth_pig/SYNTH_PIG_Weertmanyr30_inversiondata_Weertman.mat".
 %
 % OUTPUT
 %   inversiondata_filename (data, inverse_experiments_analyzed, MUA, GF), read by plot_PerturbationResults_Ensemble,
@@ -36,7 +36,7 @@ UserVar.type = "Inverse";
 UserVar.Table = UserVar.home+"4_inverse/RunTable_AMUND_nsmbl_Adjoint_HPDSample_Enriched0_19-11-2025.csv";
 UserVar.idrange = [100000 100999];
 
-inversiondata_filename = "./InversionData/AMUND/AMUND_2000_inversiondata_HPDSample.mat";
+inversiondata_filename = "./inversiondata/amund/AMUND_2000_inversiondata_HPDSample.mat";
 
 if exist(inversiondata_filename,"file")
     load(inversiondata_filename);

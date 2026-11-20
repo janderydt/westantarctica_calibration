@@ -1,9 +1,8 @@
 function B = Calc_UaOBFlux_PerBasin(MUA,F,GF,B,CtrlVar)
 % Calc_UaOBFlux_PerBasin  Ice flux across the open (ocean) boundary of the Ua mesh, per basin.
 %
-% *** FOR TRANSPARENCY, NOT RUNNABLE ***
-% Part of the postprocessing of the diagnostic results (see Calc_PerturbationResults_Ensemble); the diagnostic
-% results can be obtained upon request from the author.
+% Part of the postprocessing of the diagnostic results (see Calc_PerturbationResults_Ensemble). It can be applied to any Ua
+% result (MUA and F), for example the result files of the synthetic experiments in analysis/ua_resultsfiles.
 %
 % PURPOSE
 %   Calculates the flux across the boundary edges of the mesh that are grounded (ice base at the bed at both

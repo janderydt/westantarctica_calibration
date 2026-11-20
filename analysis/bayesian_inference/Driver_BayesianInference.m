@@ -17,10 +17,10 @@ function Driver_BayesianInference
 %
 % REQUIRES
 %   Calc_BayesianInference and its requirements; the working folder (below) has to contain the folders
-%   Emulators, DiagnosticData (and BayesianAnalysis, created if needed).
+%   emulators, diagnosticdata (and bayesiananalysis, created if needed).
 
 % make sure we're in the right folder
-% folder that contains Emulators, DiagnosticData (and BayesianAnalysis, created if needed)
+% folder that contains emulators, diagnosticdata (and bayesiananalysis, created if needed)
 cd("/path/to/analysis/folder");
 
 l = [50e3]';

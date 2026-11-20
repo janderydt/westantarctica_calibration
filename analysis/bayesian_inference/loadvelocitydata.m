@@ -18,11 +18,11 @@ function out = loadvelocitydata(domain,dataformat,years,only_grounded_ice)
 %   out.("yr"+yr).MUA / .GF
 %
 % FILES READ (data; can be obtained upon request from the author, see README)
-%   /path/to/interpolants/ (set in the code): extruded velocity interpolants of each year
+%   ../ua_input/1_interpolants/<domain>/ (relative to the folder analysis): extruded velocity interpolants of each year
 %     (GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for 2000,
 %      GriddedInterpolants_<yr>-<yr+1>_MeaSUREs_ITSLIVE_Velocities_EXTRUDED.mat for AMUND,
 %      ScatteredInterpolants_Velocities_SYNTH_PIG_<year>.mat for SYNTH_PIG)
-%   /path/to/DiagnosticData/<domain>/<domain>_Delta_u_<yr1>-<yr2>[_Weertman].mat (set in the code)
+%   ./diagnosticdata/<domain>/ (domain in lower case)/<domain>_Delta_u_<yr1>-<yr2>[_Weertman].mat 
 %     (MUA_yr2, GF_yr2); for "u" / "LOGu": <domain>_perturbation_grids.mat
 
 % assemble velocity fields
@@ -45,7 +45,7 @@ for ii=1:numel(years_unique)
         fname = "ScatteredInterpolants_Velocities_SYNTH_PIG_"+years_unique(ii)+".mat";
     end
 
-    load("/path/to/interpolants/"+fname);
+    load("../ua_input/1_interpolants/"+lower(domain)+"/"+fname);
     v_tmp = hypot(Fus.Values,Fvs.Values);
     Fu = Fus; Fu.Values = v_tmp;
     std_tmp = hypot(Fxerr.Values,Fyerr.Values);
@@ -64,9 +64,9 @@ for dd=1:numel(dataformat)
         yr2 = years_tmp(2);
 
         try
-            load("/path/to/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+"_Weertman.mat","MUA_yr2","GF_yr2");
+            load("./diagnosticdata/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+"_Weertman.mat","MUA_yr2","GF_yr2");
         catch
-            load("/path/to/DiagnosticData/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+".mat","MUA_yr2","GF_yr2");
+            load("./diagnosticdata/"+domain+"/"+domain+"_Delta_u_"+yr1+"-"+yr2+".mat","MUA_yr2","GF_yr2");
         end
         MUA = MUA_yr2; GF = GF_yr2;
 
@@ -97,7 +97,7 @@ for dd=1:numel(dataformat)
 
     elseif ismember(dataformat(dd),["u","LOGu"])
 
-        tmp=load("/path/to/DiagnosticData/"+domain+"/"+domain+"_perturbation_grids.mat");
+        tmp=load("./diagnosticdata/"+domain+"/"+domain+"_perturbation_grids.mat");
         MUA = tmp.("MUA_"+years(dd)); GF = tmp.("GF_"+years(dd));
 
         % interpolate initial and final speed onto Ua mesh

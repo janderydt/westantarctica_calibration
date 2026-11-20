@@ -59,7 +59,7 @@ for geom=["IS","GI"]
         if ismember(UserVar.Domain,"AMUND_nsmbl")
             switch UserVar.(geom+"Geometry")
                 case {'2000','2009','2014','2018','2020'}
-                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+...
+                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/GriddedInterpolants_Geometry_01-Jun-"+...
                         UserVar.(geom+"Geometry")+"_EXTRUDED.mat";
                     UserVar.("Adapt"+geom+"BaseGeometry") = 0;
                 otherwise
@@ -69,7 +69,7 @@ for geom=["IS","GI"]
         elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
             switch UserVar.(geom+"Geometry")
                 case cellstr(vertcat(["Weertmanyr"+string([30:5:50 75]), "Umbiyr"+string([30:5:50 75])]))
-                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+...
+                    UserVar.(geom+"BaseGeometry") = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/ScatteredInterpolants_Geometry_SYNTH_PIG_"+...
                         UserVar.(geom+"Geometry")+".mat";
                     UserVar.("Adapt"+geom+"BaseGeometry") = 0;
                 otherwise
@@ -89,8 +89,8 @@ for geom=["IS","GI"]
                 case {'2009','2014','2018','2020'}
                     UserVar.("Adapt"+geom+"BaseGeometry") = 1;
                     UserVar.("InterpolantsToCalculateNew"+geom+"Geometry") = ...
-                        [UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat",... % this is the base geometry
-                        UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-"+UserVar.(geom+"Geometry")+"_EXTRUDED.mat"]; % this is the perturbed geometry
+                        [UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat",... % this is the base geometry
+                        UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/GriddedInterpolants_Geometry_01-Jun-"+UserVar.(geom+"Geometry")+"_EXTRUDED.mat"]; % this is the perturbed geometry
                 otherwise
                     error("ExpID "+RunTable{ind,"ExpID"}+": Do not recognise "+geom+"thick flag in RunTable.");
             end
@@ -103,8 +103,8 @@ for geom=["IS","GI"]
                     UserVar.("Adapt"+geom+"BaseGeometry") = 1;
                     basegeom = replace(UserVar.(geom+"Geometry"),string([35:5:50 75]),"30");
                     UserVar.("InterpolantsToCalculateNew"+geom+"Geometry") = ...
-                        [UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+basegeom+".mat",... % this is the base geometry
-                        UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_"+UserVar.(geom+"Geometry")+".mat"]; % this is the perturbed geometry
+                        [UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/ScatteredInterpolants_Geometry_SYNTH_PIG_"+basegeom+".mat",... % this is the base geometry
+                        UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/ScatteredInterpolants_Geometry_SYNTH_PIG_"+UserVar.(geom+"Geometry")+".mat"]; % this is the perturbed geometry
                 otherwise
                     error("ExpID "+RunTable{ind,"ExpID"}+": Do not recognise "+geom+"thick flag in RunTable.");
             end
@@ -119,10 +119,10 @@ end
     
 %% density interpolant: same as inverse run
 if ismember(UserVar.Domain,"AMUND_nsmbl")
-    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat";   
+    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/GriddedInterpolants_Geometry_01-Jun-2000_EXTRUDED.mat";   
 
 elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
-    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Geometry_SYNTH_PIG_Weertmanyr30.mat";
+    UserVar.DensityInterpolant = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/ScatteredInterpolants_Geometry_SYNTH_PIG_Weertmanyr30.mat";
 
 end
 
@@ -160,11 +160,11 @@ end
 %% velocity interpolants for fixed boundaries // we assume these do not change in the perturbation experiments
 if ismember(UserVar.Domain,"AMUND_nsmbl")
     UserVar.Velocity = "2000";
-    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
+    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/GriddedInterpolants_1996-2003_MeaSUREs_ITSLIVE_Velocities.mat";
 
 elseif ismember(UserVar.Domain,"SYNTH_PIG_nsmbl")
     UserVar.Velocity = "Weertmanyr30";
-    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/ScatteredInterpolants_Velocities_SYNTH_PIG_Weertmanyr30.mat";
+    UserVar.VelocityInterpolants = UserVar.datafolder+"/1_interpolants/"+lower(erase(string(UserVar.Domain),"_nsmbl"))+"/ScatteredInterpolants_Velocities_SYNTH_PIG_Weertmanyr30.mat";
 
 end
 

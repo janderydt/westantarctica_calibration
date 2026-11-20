@@ -13,7 +13,7 @@ function qGL = Calc_Delta_qGL(cycle,basins_to_analyze)
 %   qGL : 1-by-number of members
 %
 % FILES READ (data; can be obtained upon request from the author, see README)
-%   inversiondata_AMUND_Weertman.mat in the current folder (written by Calc_InverseResults_Ensemble); basins_IMBIE_v2.mat
+%   ./inversiondata/amund/AMUND_2000_inversiondata_Weertman.mat (written by Calc_InverseResults_Ensemble); basins_IMBIE_v2.mat
 %
 % REQUIRES
 %   RemoveIceRisesAndIslands (same folder)
@@ -34,7 +34,7 @@ B = RemoveIceRisesAndIslands(B);
 BasinInd = [1:3];
 
 % load inversion data
-load("inversiondata_AMUND_Weertman.mat");
+load("./inversiondata/amund/AMUND_2000_inversiondata_Weertman.mat");
 
 m = [data(:).m];
 n = [data(:).n];

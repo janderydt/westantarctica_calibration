@@ -1,10 +1,10 @@
 # Basal sliding and ice rheology in West Antarctica constrained by multi-epoch satellite observations
 **Author:** Jan De Rydt, <jan.rydt@northumbria.ac.uk>
 
-Code to reproduce and analyze the data and figures of [De Rydt, 2026](TODO).
+Code to reproduce and analyze the data and figures of [De Rydt, 2026](https://doi.org/10.1017/jog.2026.10227).
 
 The study provides a new approach to calibrate uncertain paramters in large-scale viscous ice-flow models. The methodology is applied using the ice-sflow model ([Úa](https://github.com/GHilmarG/UaSource)) 
-for two domains: a synthetic Pine-Island-like glacier (`SYNTH_PIG`) and the Amundsen Sea sector of West Antarctica (`AMUND`). An ensemble of initial ice-sheet states (nominal year 2000) is created for a 
+for two domains: a synthetic Pine-Island-like glacier (`SYNTH_PIG`) and the Amundsen Sea sector of West Antarctica (`AMUND`). An ensemble of initial ice-sheet states is created for a 
 range of parameter combinations. For each ensemble member, the basal slipperiness and the rate factor are inverted for and
 then subjected to a change in geometry (calving front and ice thickness) in a diagnostic experiment, which gives the
 instantaneous change in ice speed. Neural network emulators of this change in speed are trained and used in a Bayesian
@@ -58,11 +58,11 @@ can be obtained upon request from the author.
 
 ## Data availability
 
-* Processed data (postprocessed model results, inversion data, Bayesian analysis files) on [Zenodo](DOI).
-* Meshes (AMUND meshes with their boundary and fixed-boundary files, SYNTH_PIG mesh files) on [Zenodo](DOI).
+* Processed data (postprocessed model results, inversion data, Bayesian analysis files) on [Zenodo](https://zenodo.org/records/24321711).
+* Meshes (AMUND meshes with their boundary and fixed-boundary files, SYNTH_PIG mesh files) on [Zenodo](https://zenodo.org/records/24321711).
 * Raw model output and other data that is not in the repository can be obtained upon
   request from the author.
-* Public input datasets (BedMachine, Bedmap2, MEaSUREs, ITS_LIVE,...): to be downloaded from the original sources as detailed in [De Rydt, 2026](TODO).
+* Public input datasets (BedMachine, Bedmap2, MEaSUREs, ITS_LIVE,...): to be downloaded from the original sources as detailed in [De Rydt, 2026](https://doi.org/10.1017/jog.2026.10227).
 
 ## Requirements
 

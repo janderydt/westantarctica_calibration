@@ -44,17 +44,17 @@ switch char(BaseMesh)
            'AMUND_2009_meshmin1500_meshmax100000_refined','AMUND_2014_meshmin1500_meshmax100000_refined',...
            'AMUND_2020_meshmin1500_meshmax100000_refined'}
         % Amundsen Sea meshes, one per ice front year (AMUND_GenerateBaseMesh)
-        UserVar.BaseMesh.BCs = UserVar.datafolder+"2_meshing/AMUND_meshboundarycoordinates_"+erase(BaseMesh,"AMUND_")+...
+        UserVar.BaseMesh.BCs = UserVar.datafolder+"2_meshing/amund/AMUND_meshboundarycoordinates_"+erase(BaseMesh,"AMUND_")+...
             "_extrudemesh1_variableboundaryres1.mat";
-        UserVar.BaseMesh.Mesh = UserVar.datafolder+"2_meshing/AMUND_basemesh_"+erase(BaseMesh,"AMUND_")+...
+        UserVar.BaseMesh.Mesh = UserVar.datafolder+"2_meshing/amund/AMUND_basemesh_"+erase(BaseMesh,"AMUND_")+...
             "_extrudemesh1_variableboundaryres1.mat";
-        UserVar.BaseMesh.FixedBoundaryPoints = UserVar.datafolder+"2_meshing/AMUND_fixedboundarypoints_"+erase(BaseMesh,"AMUND_")+...
+        UserVar.BaseMesh.FixedBoundaryPoints = UserVar.datafolder+"2_meshing/amund/AMUND_fixedboundarypoints_"+erase(BaseMesh,"AMUND_")+...
             "_extrudemesh1_variableboundaryres1.mat";
     case 'SYNTH_PIG'
         % synthetic Pine Island Glacier mesh, created offline
-        UserVar.BaseMesh.BCs = UserVar.datafolder + "2_meshing/SYNTH_PIG_BoundaryCoordinates.mat";
-        UserVar.BaseMesh.Mesh = UserVar.datafolder + "2_meshing/SYNTH_PIG_MeshFile_Ele22114_Nod3.mat";
-        UserVar.BaseMesh.FixedBoundaryPoints = UserVar.datafolder + "2_meshing/SYNTH_PIG_FixedBoundaryPoints.mat";
+        UserVar.BaseMesh.BCs = UserVar.datafolder + "2_meshing/synth_pig/SYNTH_PIG_BoundaryCoordinates.mat";
+        UserVar.BaseMesh.Mesh = UserVar.datafolder + "2_meshing/synth_pig/SYNTH_PIG_MeshFile_Ele22114_Nod3.mat";
+        UserVar.BaseMesh.FixedBoundaryPoints = UserVar.datafolder + "2_meshing/synth_pig/SYNTH_PIG_FixedBoundaryPoints.mat";
     otherwise
         error(['ExpID ',num2str(UserVar.ExpID),': Do not recognise Mesh flag in RunTable.']);
 end

@@ -3,7 +3,7 @@ function Plot_MarginalsInference
 %
 % PURPOSE
 %   Reads Bayesian analyses (UQLab results with the fitted posterior distribution myPosteriorDist, see Calc_MarginalsInference)
-%   selected in a file window (or, if only one file is selected, all files in ./BayesianAnalysis/ with a given range l and/or standard deviation std_ua
+%   selected in a file window (or, if only one file is selected, all files in the folder of the selected file with a given range l and/or standard deviation std_ua
 %   of the Ua errors for the cycle and floating-ice setting at the top) and plots the posterior marginals of n, m, log(dhdt_err),
 %   log10(gaA), log10(gaC), log10(gsA) and log10(gsC) in one row of panels, with the prior (dashed) and, for SYNTH_PIG, the true
 %   values (n = 3, m = 4). The sliding laws (S_pwr, S_hybr) are plotted in separate colours. The figure is saved as
@@ -11,7 +11,7 @@ function Plot_MarginalsInference
 %   Figure7_AMUND_MarginalsInference.m.
 %
 % FILES READ (data; can be obtained upon request from the author, see README)
-%   ./BayesianAnalysis/*.mat (variables myBayesianAnalysis, myPosteriorDist, UserVar)
+%   ./bayesiananalysis/<domain>/*.mat (variables myBayesianAnalysis, myPosteriorDist, UserVar)
 %
 % REQUIRES
 %   UQLab Rel. 2.0.0 (must be on the MATLAB path), Klear (Ua), cmocean, fig (third party)
@@ -24,7 +24,7 @@ rng(1,'twister'); % set the random number generator for reproducible results
 uqlab; % initialize uqlab
 
 %% load sample from existing Bayesian Analysis
-[fname,location] = uigetfile("./BayesianAnalysis/*.mat","MultiSelect","on");
+[fname,location] = uigetfile("./bayesiananalysis/*.mat","MultiSelect","on");
 
 if isscalar(fname)
 
@@ -35,7 +35,6 @@ if isscalar(fname)
     l = 50000;
 
     ind = 1;
-    location = "./BayesianAnalysis/";
     files = dir(location+"*cycle"+string(cycle)+"_floatingice"+string(floating_ice)+"*.mat");
     for ff=1:numel(files)
         load(files(ff).folder+"/"+files(ff).name,"UserVar");

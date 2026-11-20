@@ -41,13 +41,13 @@ UserVar.type = "Diagnostic";
 
 % settings for SYNTH_PIG (earlier runs): UserVar.Table = UserVar.home+"5_diagnostic/RunTable_Diagnostic_SYNTH_PIG_nsmbl__OLD-Weertmanyr30__NEW-Weertmanyr75.csv",
 % idrange = [750000 759999], slidinglaws = ["Weertman" "Umbi"],
-% inversiondata_filename = "./InversionData/SYNTH_PIG/SYNTH_PIG_Weertmanyr30_inversiondata_"+slidinglaws+".mat"
+% inversiondata_filename = "./inversiondata/synth_pig/SYNTH_PIG_Weertmanyr30_inversiondata_"+slidinglaws+".mat"
 UserVar.Table = UserVar.home+"5_diagnostic/RunTable_Diagnostic_AMUND_nsmbl__HPDSample__OLD-2000__NEW-2020.csv";
 UserVar.idrange = [120000 129999];
 slidinglaws = [];
-inversiondata_filename = "./InversionData/AMUND/AMUND_2000_inversiondata_HPDSample.mat";
+inversiondata_filename = "./inversiondata/amund/AMUND_2000_inversiondata_HPDSample.mat";
 
-perturbationdata_filename = "./DiagnosticData/AMUND/AMUND_2000_perturbationdata_HPDSample.mat";
+perturbationdata_filename = "./diagnosticdata/amund/AMUND_2000_perturbationdata_HPDSample.mat";
 
 if contains(UserVar.Table,"AMUND")
     % AMUNDSEN SEA
