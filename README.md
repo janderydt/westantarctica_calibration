@@ -75,6 +75,6 @@ can be obtained upon request from the author.
 
 ## Use of AI
 
-The preparation of this repository for publication was done with the assistance of an AI model under the direction of the author. 
-The AI model was used to add a header (purpose, inputs, outputs, requirements) and section comments to each script.
-The scientific methods, the model code and the results are the work of the authors.
+This README was drafted with the assistance of an AI model under the direction of the author, who reviewed and edited the text. 
+The same tool was used to add header blocks (purpose, inputs, outputs, requirements) and section comments to the MATLAB scripts. 
+No AI-generated content was used in the work itself; the scientific methods, code and results are the work of the author.
